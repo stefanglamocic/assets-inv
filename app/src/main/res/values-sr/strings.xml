@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mobilno Računarstvo</string>
+    <string name="fixed_assets">Osnovna sredstva</string>
+    <string name="employees">Zaposleni</string>
+    <string name="locations">Lokacije</string>
+    <string name="asset_registers">Popisne liste</string>
+    <string name="settings">Podešavanja</string>
+</resources>

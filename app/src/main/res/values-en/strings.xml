@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mobile Computing</string>
+    <string name="fixed_assets">Fixed assets</string>
+    <string name="employees">Employees</string>
+    <string name="locations">Locations</string>
+    <string name="asset_registers">Asset registers</string>
+    <string name="settings">Settings</string>
+</resources>
