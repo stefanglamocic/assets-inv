@@ -17,4 +17,13 @@
     <style name="MainToolbar">
         <item name="homeAsUpIndicator">@drawable/ic_back</item>
     </style>
+
+    <style name="OptionTitle">
+        <item name="android:drawablePadding">@dimen/padding_small</item>
+        <item name="android:padding">@dimen/padding_med</item>
+        <item name="android:textSize">@dimen/title_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:drawableTint">@color/text_grey</item>
+    </style>
 </resources>

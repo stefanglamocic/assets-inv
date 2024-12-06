@@ -6,4 +6,7 @@
     <string name="locations">Lokacije</string>
     <string name="asset_registers">Popisne liste</string>
     <string name="settings">Podešavanja</string>
+    <string name="language">Jezik</string>
+    <string name="serbian">Srpski</string>
+    <string name="english">Engleski</string>
 </resources>

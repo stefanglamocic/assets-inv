@@ -19,4 +19,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/language_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_toolbar"
+        android:text="@string/language"
+        app:drawableStartCompat="@drawable/ic_language"
+        android:theme="@style/OptionTitle"/>
+
+    <RadioGroup
+        android:id="@+id/rg_languages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/language_title"
+        android:layout_marginStart="@dimen/rg_margin">
+        <RadioButton
+            android:id="@+id/radio_serbian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/serbian"/>
+        <RadioButton
+            android:id="@+id/radio_english"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/english"/>
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
