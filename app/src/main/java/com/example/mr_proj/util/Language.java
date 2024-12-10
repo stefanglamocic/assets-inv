@@ -5,8 +5,8 @@ import androidx.annotation.NonNull;
 import com.example.mr_proj.R;
 
 public enum Language {
-    SERBIAN("srb", R.id.radio_serbian),
-    ENGLISH("eng", R.id.radio_english);
+    SERBIAN("sr", R.id.radio_serbian),
+    ENGLISH("en", R.id.radio_english);
 
     private final String language;
     private final int id;
@@ -19,7 +19,7 @@ public enum Language {
     public int getId() { return id; }
 
     public static Language getLanguage(String code) {
-        if (code.equals("eng")) {
+        if (code.equals(Language.ENGLISH.language)) {
             return Language.ENGLISH;
         }
         return Language.SERBIAN;

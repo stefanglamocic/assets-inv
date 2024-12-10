@@ -6,7 +6,9 @@ import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.os.LocaleListCompat;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.rxjava3.RxDataStore;
 
@@ -38,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         disposable = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
                 data -> setLang(Language.getLanguage(data), languagesGroup),
                 err -> setLang(Language.SERBIAN, languagesGroup));
+
         languagesGroup.setOnCheckedChangeListener(this::onLanguageChange);
     }
 
@@ -67,9 +70,12 @@ public class SettingsActivity extends AppCompatActivity {
     private void onLanguageChange(RadioGroup group, int checkedId) {
         if (checkedId == R.id.radio_serbian) {
             lang = Language.SERBIAN;
+
         }
         else if (checkedId == R.id.radio_english) {
             lang = Language.ENGLISH;
         }
+        LocaleListCompat appLocale = LocaleListCompat.forLanguageTags(lang.toString());
+        AppCompatDelegate.setApplicationLocales(appLocale);
     }
 }

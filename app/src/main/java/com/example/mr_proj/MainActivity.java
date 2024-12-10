@@ -8,20 +8,36 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.os.LocaleListCompat;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.rxjava3.RxDataStore;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mr_proj.adapter.PagerAdapter;
 import com.example.mr_proj.util.DataStoreUtil;
+import com.example.mr_proj.util.Language;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        RxDataStore<Preferences> dataStore = DataStoreUtil.getDataStoreInstance(getApplicationContext());
+        Disposable disposable = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
+                s -> {
+                    if (s == null) {
+                        setFallbackLang();
+                    }
+                }, err -> setFallbackLang());
+        disposable.dispose();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -76,5 +92,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }).attach();
+    }
+
+    private void setFallbackLang() {
+        LocaleListCompat appLocale = LocaleListCompat.forLanguageTags(
+                Language.SERBIAN.toString());
+        runOnUiThread(() -> AppCompatDelegate.setApplicationLocales(appLocale));
     }
 }
