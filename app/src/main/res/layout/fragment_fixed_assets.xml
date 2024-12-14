@@ -12,4 +12,14 @@
         android:text="@string/fixed_assets"
         android:layout_gravity="center"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_gravity="end|bottom"
+        android:contentDescription="@string/add"
+        android:layout_margin="@dimen/fab_margin"
+        />
+
 </FrameLayout>

@@ -4,4 +4,5 @@
     <dimen name="padding_med">12dp</dimen>
     <dimen name="title_size">19sp</dimen>
     <dimen name="rg_margin">24dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
