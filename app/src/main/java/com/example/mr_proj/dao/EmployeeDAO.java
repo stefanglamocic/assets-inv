@@ -14,7 +14,7 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 
 @Dao
-public interface EmployeeDAO {
+public interface EmployeeDAO extends IDAO<Employee>{
     @Insert
     Completable insert(Employee employee);
 

@@ -14,6 +14,7 @@ import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.model.Employee;
+import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
 
 import java.util.ArrayList;
@@ -38,11 +39,9 @@ public class EmployeesFragment extends Fragment {
         employees = new ArrayList<>();
         listAdapter = new ListAdapter<>(employees);
         dao = DatabaseUtil.getDbInstance(root.getContext()).employeeDAO();
-        Disposable d = dao.getAll()
-                        .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(listAdapter::notifyAdapter);
+        Disposable d = DAOService.getEntities(dao, listAdapter);
         disposables.add(d);
+
         RecyclerView employeesRecyclerView = root.findViewById(R.id.employees_list);
         employeesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         employeesRecyclerView.setAdapter(listAdapter);

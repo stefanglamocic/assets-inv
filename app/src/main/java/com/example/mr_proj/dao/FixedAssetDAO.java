@@ -17,7 +17,7 @@ import io.reactivex.rxjava3.core.Flowable;
 //https://developer.android.com/training/data-storage/room/accessing-data#return-subset
 
 @Dao
-public interface FixedAssetDAO {
+public interface FixedAssetDAO extends IDAO<FixedAsset>{
     @Insert
     Completable insert(FixedAsset asset);
 

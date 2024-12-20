@@ -14,7 +14,7 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 
 @Dao
-public interface LocationDAO {
+public interface LocationDAO extends IDAO<Location> {
     @Insert
     Completable insert(Location location);
 
