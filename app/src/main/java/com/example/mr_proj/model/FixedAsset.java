@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "fixed_asset")
-public class FixedAsset {
+public class FixedAsset implements DbEntity{
     @PrimaryKey(autoGenerate = true)
     public int id;
     public String name;
@@ -20,4 +20,14 @@ public class FixedAsset {
 
     @ColumnInfo(name = "employee_id")
     public int employeeId;
+
+    @Override
+    public String getRowText() {
+        return name;
+    }
+
+    @Override
+    public String getRowImage() {
+        return image;
+    }
 }

@@ -34,7 +34,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-    private AppDatabase db;
+//    private AppDatabase db;
     private final List<Disposable> disposables = new ArrayList<>();
 
     @Override
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 }, err -> setFallbackLang());
         disposables.add(disposable);
 
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mrdb").build();
+//        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mrdb").build();
 //        Disposable d = db.employeeDAO().getAll()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())

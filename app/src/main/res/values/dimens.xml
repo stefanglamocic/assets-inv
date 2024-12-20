@@ -2,7 +2,10 @@
 <resources>
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_med">12dp</dimen>
+    <dimen name="row_text_size">17sp</dimen>
     <dimen name="title_size">19sp</dimen>
     <dimen name="rg_margin">24dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="row_margin">6dp</dimen>
+    <dimen name="row_img_size">80dp</dimen>
 </resources>
