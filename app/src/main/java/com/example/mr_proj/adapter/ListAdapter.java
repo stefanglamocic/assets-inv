@@ -2,13 +2,16 @@ package com.example.mr_proj.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +48,7 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
 
         if (rowClickListener != null)
             holder.itemView.setOnClickListener(v -> rowClickListener.onEntityClick(entity));
+        holder.itemView.setOnLongClickListener(v -> onItemLongClick(v, entity));
     }
 
     @Override
@@ -63,6 +67,25 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
                 notifyItemInserted(i);
             }
         }
+    }
+
+    private boolean onItemLongClick(View v, T entity) {
+        PopupMenu menu = new PopupMenu(v.getContext(), v);
+        menu.getMenuInflater().inflate(R.menu.list, menu.getMenu());
+
+        menu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.edit) {
+                Toast.makeText(v.getContext(), "Izmijena " + entity.getRowText(), Toast.LENGTH_SHORT).show();
+            }
+            else if (id == R.id.remove) {
+                Toast.makeText(v.getContext(), "Brisanje " + entity.getRowText(), Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+
+        menu.show();
+        return true;
     }
 
     private void setRowImage(ImageView imageView, String imgPath) {

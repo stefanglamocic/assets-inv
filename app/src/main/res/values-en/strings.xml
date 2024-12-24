@@ -11,4 +11,6 @@
     <string name="english">English</string>
     <string name="add">Add</string>
     <string name="row_img">Image</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
 </resources>

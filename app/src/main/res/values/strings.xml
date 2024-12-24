@@ -10,4 +10,6 @@
     <string name="english">Engleski</string>
     <string name="add">Dodaj</string>
     <string name="row_img">Slika</string>
+    <string name="edit">Izmijeni</string>
+    <string name="remove">Ukloni</string>
 </resources>
