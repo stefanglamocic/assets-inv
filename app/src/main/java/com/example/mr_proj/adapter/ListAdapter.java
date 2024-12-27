@@ -14,9 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mr_proj.R;
+import com.example.mr_proj.dao.IDAO;
+import com.example.mr_proj.fragments.dialog.EditEntityDialog;
+import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.DbEntity;
 
 import java.util.List;
@@ -25,11 +30,13 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
     private static final String IS_PREFIX = "/data/data";
 
     private final List<T> entities;
+    private final IDAO<T> dao;
     private IRowClickListener<T> rowClickListener;
 
 
-    public ListAdapter(List<T> entities) {
+    public ListAdapter(List<T> entities, IDAO<T> dao) {
         this.entities = entities;
+        this.dao = dao;
     }
 
     @NonNull
@@ -37,7 +44,7 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
     public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View row = inflater.inflate(R.layout.list_row, parent, false);
-        return new ListAdapter.RowHolder(row);
+        return new RowHolder(row);
     }
 
     @Override
@@ -74,13 +81,17 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
         menu.getMenuInflater().inflate(R.menu.list, menu.getMenu());
 
         menu.setOnMenuItemClickListener(item -> {
+            DialogFragment dialog = null;
+
             int id = item.getItemId();
             if (id == R.id.edit) {
-                Toast.makeText(v.getContext(), "Izmijena " + entity.getRowText(), Toast.LENGTH_SHORT).show();
+                dialog = new EditEntityDialog<>(entity, dao);
             }
             else if (id == R.id.remove) {
-                Toast.makeText(v.getContext(), "Brisanje " + entity.getRowText(), Toast.LENGTH_SHORT).show();
+                dialog = new RemoveEntityDialog<>(entity, dao);
             }
+            assert dialog != null;
+            dialog.show(((FragmentActivity)v.getContext()).getSupportFragmentManager() , "longClickDialog");
             return true;
         });
 

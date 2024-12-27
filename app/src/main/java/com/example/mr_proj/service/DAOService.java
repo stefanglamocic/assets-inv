@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DAOService {
-    public static <T extends IDAO<U>, U extends DbEntity> Disposable getEntities(T dao, ListAdapter<U> listAdapter) {
+    public static <T  extends DbEntity> Disposable getEntities(IDAO<T> dao, ListAdapter<T> listAdapter) {
         return dao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

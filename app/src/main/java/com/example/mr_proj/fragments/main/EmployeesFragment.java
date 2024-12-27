@@ -24,19 +24,16 @@ import io.reactivex.rxjava3.disposables.Disposable;
 
 
 public class EmployeesFragment extends Fragment {
-    private EmployeeDAO dao;
     private final List<Disposable> disposables = new ArrayList<>();
-    private ListAdapter<Employee> listAdapter;
-    private List<Employee> employees;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_employees, container, false);
 
-        employees = new ArrayList<>();
-        listAdapter = new ListAdapter<>(employees);
-        dao = DatabaseUtil.getDbInstance(root.getContext()).employeeDAO();
+        List<Employee> employees = new ArrayList<>();
+        EmployeeDAO dao = DatabaseUtil.getDbInstance(root.getContext()).employeeDAO();
+        ListAdapter<Employee> listAdapter = new ListAdapter<>(employees, dao);
         Disposable d = DAOService.getEntities(dao, listAdapter);
         disposables.add(d);
 

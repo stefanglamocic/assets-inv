@@ -13,4 +13,6 @@
     <string name="row_img">Slika</string>
     <string name="edit">Izmijeni</string>
     <string name="remove">Ukloni</string>
+    <string name="confirm">Potvrdi</string>
+    <string name="cancel">Poništi</string>
 </resources>

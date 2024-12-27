@@ -13,4 +13,6 @@
     <string name="row_img">Image</string>
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>
