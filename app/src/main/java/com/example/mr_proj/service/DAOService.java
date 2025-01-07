@@ -9,10 +9,22 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DAOService {
-    public static <T  extends DbEntity> Disposable getEntities(IDAO<T> dao, ListAdapter<T> listAdapter) {
-        return dao.getAll()
+    public static <T  extends DbEntity> Disposable getEntities(ListAdapter<T> listAdapter) {
+        return listAdapter.getDao()
+                .getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listAdapter::notifyAdapter);
+    }
+
+    public static <T extends DbEntity> Disposable insertEntity(T entity, ListAdapter<T> listAdapter) {
+        return listAdapter.getDao()
+                .insert(entity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    listAdapter.getEntities().add(entity);
+                    listAdapter.notifyItemInserted(listAdapter.getItemCount() - 1);
+                });
     }
 }

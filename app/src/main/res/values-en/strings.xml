@@ -15,4 +15,8 @@
     <string name="remove">Remove</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="firstName">First name</string>
+    <string name="lastName">Last name</string>
+    <string name="save">Save</string>
+    <string name="form_notice">Enter the data into required fields.</string>
 </resources>

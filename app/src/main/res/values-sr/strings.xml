@@ -15,4 +15,8 @@
     <string name="remove">Ukloni</string>
     <string name="confirm">Potvrdi</string>
     <string name="cancel">Poništi</string>
+    <string name="firstName">Ime</string>
+    <string name="lastName">Prezime</string>
+    <string name="save">Sačuvaj</string>
+    <string name="form_notice">Unesite podatke u zadata polja.</string>
 </resources>

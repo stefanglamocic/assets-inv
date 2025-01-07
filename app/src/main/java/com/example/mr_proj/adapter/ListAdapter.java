@@ -85,7 +85,7 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
 
             int id = item.getItemId();
             if (id == R.id.edit) {
-                dialog = new EditEntityDialog<>(entity, dao);
+                dialog = new EditEntityDialog<>(entity);
             }
             else if (id == R.id.remove) {
                 dialog = new RemoveEntityDialog<>(entity, dao);
@@ -115,9 +115,13 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
         }
     }
 
+    public List<T> getEntities() { return entities; }
+
     public void setRowClickListener(IRowClickListener<T> rowClickListener) {
         this.rowClickListener = rowClickListener;
     }
+
+    public IDAO<T> getDao() { return dao; }
 
     public static class RowHolder extends RecyclerView.ViewHolder {
         ImageView rowImage;
