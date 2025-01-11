@@ -3,12 +3,11 @@ package com.example.mr_proj.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
-public class Employee implements DbEntity{
-    private static final String IMG = "ic_user";
+import java.util.Objects;
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+@Entity
+public class Employee extends DbEntity{
+
     public String firstName;
     public String lastName;
 

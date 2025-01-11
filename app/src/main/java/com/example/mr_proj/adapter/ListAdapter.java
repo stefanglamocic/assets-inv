@@ -2,10 +2,10 @@ package com.example.mr_proj.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,18 +25,20 @@ import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.DbEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAdapter.RowHolder>{
-    private static final String IS_PREFIX = "/data/data";
+    private static final String IS_PREFIX = "/data/data"; // internal storage file path prefix
 
-    private final List<T> entities;
+    private final List<T> entities = new ArrayList<>();
     private final IDAO<T> dao;
-    private IRowClickListener<T> rowClickListener;
+    private final Fragment fragment;
+    private IRowClickListener<T> rowClickListener; //event za klik na red
 
 
-    public ListAdapter(List<T> entities, IDAO<T> dao) {
-        this.entities = entities;
+    public ListAdapter(IDAO<T> dao, Fragment fragment) {
+        this.fragment = fragment;
         this.dao = dao;
     }
 
@@ -79,7 +82,6 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
     private boolean onItemLongClick(View v, T entity) {
         PopupMenu menu = new PopupMenu(v.getContext(), v);
         menu.getMenuInflater().inflate(R.menu.list, menu.getMenu());
-
         menu.setOnMenuItemClickListener(item -> {
             DialogFragment dialog = null;
 
@@ -91,7 +93,7 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
                 dialog = new RemoveEntityDialog<>(entity, dao);
             }
             assert dialog != null;
-            dialog.show(((FragmentActivity)v.getContext()).getSupportFragmentManager() , "longClickDialog");
+            dialog.show(fragment.getChildFragmentManager(), "longClickDialog");
             return true;
         });
 

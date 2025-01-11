@@ -17,6 +17,8 @@ import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.EditEntityDialog;
+import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
@@ -37,9 +39,8 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_employees, container, false);
 
-        List<Employee> employees = new ArrayList<>();
         EmployeeDAO dao = DatabaseUtil.getDbInstance(root.getContext()).employeeDAO();
-        listAdapter = new ListAdapter<>(employees, dao);
+        listAdapter = new ListAdapter<>(dao, this);
         Disposable d = DAOService.getEntities(listAdapter);
         disposables.add(d);
 
@@ -52,7 +53,7 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
     }
 
     private void onAddEmployee(View view) {
-        DialogFragment dialog = new AddEntityDialog<>();
+        DialogFragment dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addEmployee");
     }
 
@@ -65,20 +66,40 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
 
     @Override
     public void onAddPositiveClick(DialogFragment dialog) {
+        Employee employee = extractFromFields(dialog);
+        if (employee == null)
+            return;
+        Disposable d = DAOService.insertEntity(employee, listAdapter);
+        disposables.add(d);
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onEditPositiveClick(DialogFragment dialog) {
+        Employee employee = extractFromFields(dialog);
+        if (employee == null)
+            return;
+
+        EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
+        employee.id = editDialog.getEntityId();
+
+        Disposable d = DAOService.updateEntity(employee, listAdapter);
+        disposables.add(d);
+        dialog.dismiss();
+    }
+
+    private Employee extractFromFields(DialogFragment dialog) {
         String firstName = DialogUtil.getFieldValue(dialog, R.id.firstName);
         String lastName = DialogUtil.getFieldValue(dialog, R.id.lastName);
 
         if (firstName == null || lastName == null)
-            return;
+            return null;
 
         if (firstName.isEmpty() || lastName.isEmpty()) {
             Toast.makeText(getContext(), R.string.form_notice, Toast.LENGTH_SHORT).show();
-            return;
+            return null;
         }
 
-        Employee employee = new Employee(firstName, lastName);
-        Disposable d = DAOService.insertEntity(employee, listAdapter);
-        disposables.add(d);
-        dialog.dismiss();
+        return new Employee(firstName, lastName);
     }
 }

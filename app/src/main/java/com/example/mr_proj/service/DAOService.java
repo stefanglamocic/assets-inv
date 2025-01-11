@@ -1,7 +1,8 @@
 package com.example.mr_proj.service;
 
+import android.content.Entity;
+
 import com.example.mr_proj.adapter.ListAdapter;
-import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.model.DbEntity;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -25,6 +26,18 @@ public class DAOService {
                 .subscribe(() -> {
                     listAdapter.getEntities().add(entity);
                     listAdapter.notifyItemInserted(listAdapter.getItemCount() - 1);
+                });
+    }
+
+    public static <T extends DbEntity> Disposable updateEntity(T entity, ListAdapter<T> listAdapter) {
+        return listAdapter.getDao()
+                .update(entity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    int position = listAdapter.getEntities().indexOf(entity);
+                    listAdapter.getEntities().set(position, entity);
+                    listAdapter.notifyItemChanged(position);
                 });
     }
 }

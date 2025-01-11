@@ -4,10 +4,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
+
 @Entity(tableName = "fixed_asset")
-public class FixedAsset implements DbEntity{
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+public class FixedAsset extends DbEntity{
     public String name;
     public String description;
     public int barCode;

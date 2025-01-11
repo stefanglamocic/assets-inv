@@ -9,12 +9,12 @@ import android.view.LayoutInflater;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.mr_proj.R;
-import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.model.DbEntity;
 
-public class AddEntityDialog<T extends DbEntity> extends DialogFragment {
+public class AddEntityDialog extends DialogFragment {
     DialogListener listener;
 
     @Override
@@ -40,14 +40,16 @@ public class AddEntityDialog<T extends DbEntity> extends DialogFragment {
                 .setPositiveButton(R.string.save, null)
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dismiss());
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(d -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> listener.onAddPositiveClick(AddEntityDialog.this));
-        });
+        dialog.setOnShowListener(d ->
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setOnClickListener(v -> listener.onAddPositiveClick(AddEntityDialog.this))
+        );
 
         return dialog;
     }
 
     public interface DialogListener {
         void onAddPositiveClick(DialogFragment dialog);
+        void onEditPositiveClick(DialogFragment dialog);
     }
 }
