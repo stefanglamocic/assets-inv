@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
+import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.service.DAOService;
@@ -30,7 +30,7 @@ import java.util.List;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 
-public class EmployeesFragment extends Fragment implements AddEntityDialog.DialogListener {
+public class EmployeesFragment extends Fragment implements AddEntityDialog.DialogListener, RemoveEntityDialog.RemoveDialogListener {
     private final List<Disposable> disposables = new ArrayList<>();
     private ListAdapter<Employee> listAdapter;
 
@@ -86,6 +86,14 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
         Disposable d = DAOService.updateEntity(employee, listAdapter);
         disposables.add(d);
         dialog.dismiss();
+    }
+
+    @Override
+    public void onPositiveClick(DialogFragment dialog) {
+        RemoveEntityDialog<? extends DbEntity> removeDialog = (RemoveEntityDialog<? extends DbEntity>) dialog;
+        Employee entity = (Employee) removeDialog.getEntity();
+        Disposable d = DAOService.deleteEntity(entity, listAdapter);
+        disposables.add(d);
     }
 
     private Employee extractFromFields(DialogFragment dialog) {

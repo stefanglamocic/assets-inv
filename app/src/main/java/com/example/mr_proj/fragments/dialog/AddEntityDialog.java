@@ -9,10 +9,8 @@ import android.view.LayoutInflater;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import com.example.mr_proj.R;
-import com.example.mr_proj.model.DbEntity;
 
 public class AddEntityDialog extends DialogFragment {
     DialogListener listener;

@@ -2,18 +2,13 @@ package com.example.mr_proj.fragments.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mr_proj.R;
-import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 
