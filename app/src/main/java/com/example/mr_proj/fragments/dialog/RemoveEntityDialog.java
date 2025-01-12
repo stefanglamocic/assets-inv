@@ -43,7 +43,7 @@ public class RemoveEntityDialog<T extends DbEntity> extends DialogFragment {
         return builder.create();
     }
 
-    public T getEntity() { return entity; }
+    public int getEntityId() { return entity.id; }
 
     public interface RemoveDialogListener {
         void onPositiveClick(DialogFragment dialog);

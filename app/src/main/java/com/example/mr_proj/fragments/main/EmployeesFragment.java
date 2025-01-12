@@ -91,8 +91,9 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
     @Override
     public void onPositiveClick(DialogFragment dialog) {
         RemoveEntityDialog<? extends DbEntity> removeDialog = (RemoveEntityDialog<? extends DbEntity>) dialog;
-        Employee entity = (Employee) removeDialog.getEntity();
-        Disposable d = DAOService.deleteEntity(entity, listAdapter);
+        Employee employee = new Employee();
+        employee.id = removeDialog.getEntityId();
+        Disposable d = DAOService.deleteEntity(employee, listAdapter);
         disposables.add(d);
     }
 
