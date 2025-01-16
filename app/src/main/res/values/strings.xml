@@ -19,4 +19,7 @@
     <string name="save">Sačuvaj</string>
     <string name="form_notice">Unesite podatke u zadata polja.</string>
     <string name="search">Pretraga</string>
+    <string name="name">Naziv</string>
+    <string name="description">Opis</string>
+    <string name="bar_code">Bar kod</string>
 </resources>

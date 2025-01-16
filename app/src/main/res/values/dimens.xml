@@ -10,4 +10,5 @@
     <dimen name="row_img_size">80dp</dimen>
     <dimen name="margin_med">16dp</dimen>
     <dimen name="margin_large">32dp</dimen>
+    <dimen name="desc_max_height">120dp</dimen>
 </resources>

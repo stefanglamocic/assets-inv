@@ -20,4 +20,7 @@
     <string name="save">Save</string>
     <string name="form_notice">Enter the data into required fields.</string>
     <string name="search">Search</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="bar_code">Bar code</string>
 </resources>
