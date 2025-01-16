@@ -19,4 +19,5 @@
     <string name="lastName">Last name</string>
     <string name="save">Save</string>
     <string name="form_notice">Enter the data into required fields.</string>
+    <string name="search">Search</string>
 </resources>

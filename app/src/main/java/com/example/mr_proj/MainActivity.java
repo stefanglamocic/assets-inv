@@ -10,17 +10,16 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.os.LocaleListCompat;
 import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.rxjava3.RxDataStore;
-import androidx.room.Room;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.adapter.PagerAdapter;
-import com.example.mr_proj.model.AppDatabase;
-import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.util.DataStoreUtil;
 import com.example.mr_proj.util.Language;
 import com.google.android.material.tabs.TabLayout;
@@ -29,13 +28,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
-//    private AppDatabase db;
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
     private final List<Disposable> disposables = new ArrayList<>();
+    private ViewPager2 viewPager;
+    private PagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 }, err -> setFallbackLang());
         disposables.add(disposable);
 
-//        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mrdb").build();
-//        Disposable d = db.employeeDAO().getAll()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(list -> Log.println(Log.DEBUG, "Main activity", list.toString()));
-//        disposables.add(d);
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewPager2 viewPager = findViewById(R.id.pager);
-        FragmentStateAdapter pagerAdapter = new PagerAdapter(this);
+        viewPager = findViewById(R.id.pager);
+        pagerAdapter = new PagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -78,9 +69,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        filterCurrentFragment(newText);
+        return true;
+    }
+
+    private void filterCurrentFragment(String query) {
+        int currentItem = viewPager.getCurrentItem();
+        Fragment currentFragment = pagerAdapter.getFragmentAt(currentItem);
+        if (currentFragment instanceof ListAdapter.Filterable) {
+            ((ListAdapter.Filterable) currentFragment).filter(query);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        if (searchView != null)
+            searchView.setOnQueryTextListener(this);
+
         return super.onCreateOptionsMenu(menu);
     }
 

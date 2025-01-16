@@ -18,4 +18,5 @@
     <string name="lastName">Prezime</string>
     <string name="save">Sačuvaj</string>
     <string name="form_notice">Unesite podatke u zadata polja.</string>
+    <string name="search">Pretraga</string>
 </resources>

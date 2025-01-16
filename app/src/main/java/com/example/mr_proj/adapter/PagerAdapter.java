@@ -10,8 +10,13 @@ import com.example.mr_proj.fragments.main.EmployeesFragment;
 import com.example.mr_proj.fragments.main.FixedAssetsFragment;
 import com.example.mr_proj.fragments.main.LocationsFragment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PagerAdapter extends FragmentStateAdapter {
     private static final int NUM_PAGES = 4;
+
+    private final Map<Integer, Fragment> fragmentMap = new HashMap<>();
 
     public PagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -20,20 +25,30 @@ public class PagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+        Fragment fragment;
         switch (position) {
             case 1:
-                return new EmployeesFragment();
+                fragment = new EmployeesFragment();
+                break;
             case 2:
-                return new LocationsFragment();
+                fragment = new LocationsFragment();
+                break;
             case 3:
-                return new AssetRegistersFragment();
+                fragment = new AssetRegistersFragment();
+                break;
             default:
-                return new FixedAssetsFragment();
+                fragment = new FixedAssetsFragment();
         }
+        fragmentMap.put(position, fragment);
+        return fragment;
     }
 
     @Override
     public int getItemCount() {
         return NUM_PAGES;
+    }
+
+    public Fragment getFragmentAt(int position) {
+        return fragmentMap.get(position);
     }
 }

@@ -26,4 +26,7 @@ public interface LocationDAO extends IDAO<Location> {
 
     @Query("SELECT * FROM location")
     Flowable<List<Location>> getAll();
+
+    @Query("SELECT * FROM location WHERE city LIKE :query")
+    Flowable<List<Location>> search(String query);
 }

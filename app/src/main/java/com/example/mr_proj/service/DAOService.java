@@ -1,5 +1,7 @@
 package com.example.mr_proj.service;
 
+import android.annotation.SuppressLint;
+
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.model.DbEntity;
 
@@ -10,6 +12,8 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DAOService {
+    private static Disposable searchDisposable;
+
     public static <T  extends DbEntity> Disposable getEntities(ListAdapter<T> listAdapter) {
         return listAdapter.getDao()
                 .getAll()
@@ -52,5 +56,23 @@ public class DAOService {
                     entities.remove(position);
                     listAdapter.notifyItemRemoved(position);
                 });
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public static <T extends DbEntity> Disposable searchEntities(String query, ListAdapter<T> listAdapter) {
+        if (searchDisposable != null && !searchDisposable.isDisposed())
+            searchDisposable.dispose();
+
+        searchDisposable = listAdapter.getDao()
+                .search(query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    listAdapter.getEntities().clear();
+                    listAdapter.getEntities().addAll(list);
+                    listAdapter.notifyDataSetChanged();
+                });
+
+        return searchDisposable;
     }
 }

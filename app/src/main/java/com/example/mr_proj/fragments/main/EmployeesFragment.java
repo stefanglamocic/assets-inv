@@ -30,7 +30,10 @@ import java.util.List;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 
-public class EmployeesFragment extends Fragment implements AddEntityDialog.DialogListener, RemoveEntityDialog.RemoveDialogListener {
+public class EmployeesFragment extends Fragment
+        implements AddEntityDialog.DialogListener,
+            RemoveEntityDialog.RemoveDialogListener,
+            ListAdapter.Filterable {
     private final List<Disposable> disposables = new ArrayList<>();
     private ListAdapter<Employee> listAdapter;
 
@@ -59,8 +62,11 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
 
     @Override
     public void onDestroy() {
-        for (Disposable d : disposables)
-            d.dispose();
+        for (Disposable d : disposables) {
+            if (d != null && !d.isDisposed())
+                d.dispose();
+        }
+
         super.onDestroy();
     }
 
@@ -94,6 +100,13 @@ public class EmployeesFragment extends Fragment implements AddEntityDialog.Dialo
         Employee employee = new Employee();
         employee.id = removeDialog.getEntityId();
         Disposable d = DAOService.deleteEntity(employee, listAdapter);
+        disposables.add(d);
+    }
+
+    @Override
+    public void filter(String query) {
+        String searchQuery = "%" + query.trim() + "%";
+        Disposable d = DAOService.searchEntities(searchQuery, listAdapter);
         disposables.add(d);
     }
 

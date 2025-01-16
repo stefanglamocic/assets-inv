@@ -29,4 +29,7 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
 
     @Delete
     Completable delete(FixedAsset asset);
+
+    @Query("SELECT * FROM fixed_asset WHERE name LIKE :query OR description LIKE :query")
+    Flowable<List<FixedAsset>> search(String query);
 }

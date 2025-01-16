@@ -28,7 +28,7 @@ import java.util.List;
 public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAdapter.RowHolder>{
     private static final String IS_PREFIX = "/data/data"; // internal storage file path prefix
 
-    private final List<T> entities = new ArrayList<>();
+    private List<T> entities = new ArrayList<>();
     private final IDAO<T> dao;
     private final Fragment fragment;
     private IRowClickListener<T> rowClickListener; //event za klik na red
@@ -135,5 +135,9 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
 
     public interface IRowClickListener<T extends DbEntity> {
         void onEntityClick(T entity);
+    }
+
+    public interface Filterable {
+        void filter(String query);
     }
 }

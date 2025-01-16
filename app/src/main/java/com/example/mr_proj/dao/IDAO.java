@@ -12,4 +12,5 @@ public interface IDAO<T extends DbEntity> {
     Completable insert(T entity);
     Completable update(T entity);
     Completable delete(T entity);
+    Flowable<List<T>> search(String query);
 }

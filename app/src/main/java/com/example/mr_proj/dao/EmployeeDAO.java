@@ -26,5 +26,7 @@ public interface EmployeeDAO extends IDAO<Employee>{
 
     @Delete
     Completable delete(Employee employee);
-
+    
+    @Query("SELECT * FROM employee WHERE firstName LIKE :query OR lastName LIKE :query")
+    Flowable<List<Employee>> search(String query);
 }
