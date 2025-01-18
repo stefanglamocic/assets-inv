@@ -1,9 +1,6 @@
 package com.example.mr_proj.model;
 
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import java.util.Objects;
 
 @Entity
 public class Location extends DbEntity{
