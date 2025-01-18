@@ -30,6 +30,7 @@ public class AddEntityDialog extends DialogFragment implements OnMapReadyCallbac
 
     DialogListener listener;
     private View.OnClickListener scanButtonListener;
+    private MapReadyListener mapReadyListener;
     private MapView mapView;
 
     @Override
@@ -104,8 +105,14 @@ public class AddEntityDialog extends DialogFragment implements OnMapReadyCallbac
         this.scanButtonListener = scanButtonListener;
     }
 
+    public void setMapReadyListener(MapReadyListener mapReadyListener) {
+        this.mapReadyListener = mapReadyListener;
+    }
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        mapReadyListener.onMapReady();
+
         LatLng defaultLocation = new LatLng(44.772182, 17.191000);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
@@ -117,5 +124,9 @@ public class AddEntityDialog extends DialogFragment implements OnMapReadyCallbac
     public interface DialogListener {
         void onAddPositiveClick(DialogFragment dialog);
         void onEditPositiveClick(DialogFragment dialog);
+    }
+
+    public interface MapReadyListener {
+        void onMapReady();
     }
 }
