@@ -15,6 +15,11 @@ public class Location extends DbEntity{
         longitude = location.longitude;
     }
 
+    public Location(String city, LatLng location) {
+        this(location);
+        this.city = city;
+    }
+
     public String city;
     public double latitude;
     public double longitude;

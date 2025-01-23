@@ -11,6 +11,10 @@ import androidx.annotation.Nullable;
 import com.example.mr_proj.R;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
+import com.example.mr_proj.model.Location;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     private final T entity;
@@ -41,6 +45,14 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
             EditText lastNameET = dialog.findViewById(R.id.lastName);
             firstNameET.setText(employee.firstName);
             lastNameET.setText(employee.lastName);
+        }
+        if (entity instanceof Location) {
+            Location location = (Location) entity;
+            currentPosition = new LatLng(location.latitude, location.longitude);
+            map.clear();
+            map.addMarker(new MarkerOptions()
+                    .position(currentPosition));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 9.2f));
         }
     }
 }

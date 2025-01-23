@@ -33,8 +33,8 @@ public class AddEntityDialog extends DialogFragment
     private View.OnClickListener scanButtonListener;
     private MapReadyListener mapReadyListener;
     private MapView mapView;
-    private GoogleMap map;
-    private LatLng currentPosition = new LatLng(44.772182, 17.191000);
+    protected GoogleMap map;
+    protected LatLng currentPosition = new LatLng(44.772182, 17.191000);
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -66,6 +66,7 @@ public class AddEntityDialog extends DialogFragment
             dialogView = inflater.inflate(R.layout.dialog_employee_form, null);
         }
         else if (parentFragment instanceof LocationsFragment) {
+            mapReadyListener = (MapReadyListener) parentFragment;
             dialogView = inflater.inflate(R.layout.dialog_location, null);
 
             Bundle mapViewBundle = null;
@@ -106,10 +107,6 @@ public class AddEntityDialog extends DialogFragment
 
     public void setScanButtonListener(View.OnClickListener scanButtonListener) {
         this.scanButtonListener = scanButtonListener;
-    }
-
-    public void setMapReadyListener(MapReadyListener mapReadyListener) {
-        this.mapReadyListener = mapReadyListener;
     }
 
     @Override
