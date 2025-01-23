@@ -1,10 +1,12 @@
 package com.example.mr_proj.fragments.main;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,18 @@ import android.widget.ProgressBar;
 
 import com.example.mr_proj.R;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.EditEntityDialog;
+import com.example.mr_proj.model.DbEntity;
+import com.example.mr_proj.model.Location;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
-public class LocationsFragment extends Fragment implements AddEntityDialog.DialogListener{
+
+public class LocationsFragment extends BaseFragment<Location> implements AddEntityDialog.DialogListener{
     private ProgressBar loadingSpinner;
 
     @Override
@@ -42,11 +52,29 @@ public class LocationsFragment extends Fragment implements AddEntityDialog.Dialo
 
     @Override
     public void onAddPositiveClick(DialogFragment dialog) {
+        LatLng coors = ((AddEntityDialog)dialog).getCurrentPosition();
+        String city = null;
+        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(coors.latitude, coors.longitude, 1);
+            if (addresses != null)
+                city = addresses.get(0).getLocality();
+        } catch (IOException e) {
+            Log.println(Log.DEBUG, "Geocoder", "geocoder exception");
+        }
+        if (city == null)
+            city = "Banja Luka";
 
+        dialog.dismiss();
     }
 
     @Override
     public void onEditPositiveClick(DialogFragment dialog) {
+        EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
+        int locationId = editDialog.getEntityId();
+        LatLng coors = editDialog.getCurrentPosition();
 
+        //Location location = new Location(coors);
+        //location.id = locationId;
     }
 }

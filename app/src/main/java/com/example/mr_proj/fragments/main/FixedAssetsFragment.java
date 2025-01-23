@@ -3,7 +3,6 @@ package com.example.mr_proj.fragments.main;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,7 @@ import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
-public class FixedAssetsFragment extends Fragment
+public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     implements AddEntityDialog.DialogListener {
 
     @Override

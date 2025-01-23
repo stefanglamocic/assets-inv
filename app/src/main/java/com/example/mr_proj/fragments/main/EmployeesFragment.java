@@ -3,7 +3,6 @@ package com.example.mr_proj.fragments.main;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,18 +23,13 @@ import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
 
-public class EmployeesFragment extends Fragment
+public class EmployeesFragment extends BaseFragment<Employee>
         implements AddEntityDialog.DialogListener,
-            RemoveEntityDialog.RemoveDialogListener,
-            ListAdapter.Filterable {
-    private final List<Disposable> disposables = new ArrayList<>();
-    private ListAdapter<Employee> listAdapter;
+            RemoveEntityDialog.RemoveDialogListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,16 +52,6 @@ public class EmployeesFragment extends Fragment
     private void onAddEmployee(View view) {
         DialogFragment dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addEmployee");
-    }
-
-    @Override
-    public void onDestroy() {
-        for (Disposable d : disposables) {
-            if (d != null && !d.isDisposed())
-                d.dispose();
-        }
-
-        super.onDestroy();
     }
 
     @Override
@@ -100,13 +84,6 @@ public class EmployeesFragment extends Fragment
         Employee employee = new Employee();
         employee.id = removeDialog.getEntityId();
         Disposable d = DAOService.deleteEntity(employee, listAdapter);
-        disposables.add(d);
-    }
-
-    @Override
-    public void filter(String query) {
-        String searchQuery = "%" + query.trim() + "%";
-        Disposable d = DAOService.searchEntities(searchQuery, listAdapter);
         disposables.add(d);
     }
 

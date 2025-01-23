@@ -25,13 +25,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class AddEntityDialog extends DialogFragment implements OnMapReadyCallback {
+public class AddEntityDialog extends DialogFragment
+        implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     DialogListener listener;
     private View.OnClickListener scanButtonListener;
     private MapReadyListener mapReadyListener;
     private MapView mapView;
+    private GoogleMap map;
+    private LatLng currentPosition = new LatLng(44.772182, 17.191000);
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -111,6 +114,7 @@ public class AddEntityDialog extends DialogFragment implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        map = googleMap;
         mapReadyListener.onMapReady();
 
         LatLng defaultLocation = new LatLng(44.772182, 17.191000);
@@ -119,7 +123,19 @@ public class AddEntityDialog extends DialogFragment implements OnMapReadyCallbac
         googleMap.addMarker(new MarkerOptions()
                 .position(defaultLocation));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 9.2f));
+
+        map.setOnMapClickListener(this);
     }
+
+    @Override
+    public void onMapClick(@NonNull LatLng latLng) {
+        map.clear();
+        map.addMarker(new MarkerOptions()
+                .position(latLng));
+        currentPosition = latLng;
+    }
+
+    public LatLng getCurrentPosition() { return currentPosition; }
 
     public interface DialogListener {
         void onAddPositiveClick(DialogFragment dialog);

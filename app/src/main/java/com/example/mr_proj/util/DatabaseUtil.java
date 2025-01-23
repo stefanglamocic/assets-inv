@@ -13,7 +13,9 @@ public class DatabaseUtil {
 
     public static synchronized AppDatabase getDbInstance(Context context) {
         if (db == null)
-            db = Room.databaseBuilder(context, AppDatabase.class, "mrdb").build();
+            db = Room.databaseBuilder(context, AppDatabase.class, "mrdb")
+                    .addMigrations(AppDatabase.MIGRATION_1_2)
+                    .build();
         return db;
     }
 }
