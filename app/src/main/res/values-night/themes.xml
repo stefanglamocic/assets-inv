@@ -11,7 +11,8 @@
         <item name="colorOnSecondary">@color/text_grey</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <item name="android:tint">@color/grey</item>
     </style>
 
     <style name="OptionTitle">
