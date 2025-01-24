@@ -23,4 +23,6 @@
     <string name="name">Naziv</string>
     <string name="description">Opis</string>
     <string name="bar_code">Bar kod</string>
+    <string name="details">Detalji</string>
+    <string name="ok">OK</string>
 </resources>

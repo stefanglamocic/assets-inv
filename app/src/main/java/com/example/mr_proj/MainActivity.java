@@ -2,7 +2,6 @@ package com.example.mr_proj;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         attachTabs(tabLayout, viewPager);
     }
 

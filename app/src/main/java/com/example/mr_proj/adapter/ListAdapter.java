@@ -28,10 +28,10 @@ import java.util.List;
 public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAdapter.RowHolder>{
     private static final String IS_PREFIX = "/data/data"; // internal storage file path prefix
 
-    private List<T> entities = new ArrayList<>();
+    private final List<T> entities = new ArrayList<>();
     private final IDAO<T> dao;
     private final Fragment fragment;
-    private IRowClickListener<T> rowClickListener; //event za klik na red
+    private IRowClickListener<T> rowClickListener;
 
 
     public ListAdapter(IDAO<T> dao, Fragment fragment) {

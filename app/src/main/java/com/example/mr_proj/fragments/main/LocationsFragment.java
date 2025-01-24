@@ -18,6 +18,7 @@ import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.DetailsDialog;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.DbEntity;
@@ -50,6 +51,7 @@ public class LocationsFragment extends BaseFragment<Location>
 
         LocationDAO dao = DatabaseUtil.getDbInstance(root.getContext()).locationDAO();
         listAdapter = new ListAdapter<>(dao, this);
+        listAdapter.setRowClickListener(this::onItemClick);
         Disposable d = DAOService.getEntities(listAdapter);
         disposables.add(d);
 
@@ -61,9 +63,15 @@ public class LocationsFragment extends BaseFragment<Location>
     }
 
     private void onOpenDialog(View view) {
+        loadingSpinner.setVisibility(View.VISIBLE);
         AddEntityDialog dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addLocation");
+    }
+
+    private void onItemClick(Location location) {
         loadingSpinner.setVisibility(View.VISIBLE);
+        DetailsDialog<Location> dialog = new DetailsDialog<>(location);
+        dialog.show(getChildFragmentManager(), "locationDetails");
     }
 
     @Override
