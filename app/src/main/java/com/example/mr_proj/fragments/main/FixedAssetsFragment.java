@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 public class FixedAssetsFragment extends BaseFragment<FixedAsset>
-    implements AddEntityDialog.DialogListener {
+    implements AddEntityDialog.DialogListener, AddEntityDialog.FixedAssetsButtonsListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,7 +32,6 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     private void onAdd(View view) {
         AddEntityDialog dialog = new AddEntityDialog();
-        dialog.setScanButtonListener(this::onOpenScanner);
         dialog.show(getChildFragmentManager(), "addFixedAsset");
     }
 
@@ -53,11 +52,23 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         String name = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_name);
         String desc = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_desc);
         int barCode = Integer.parseInt(DialogUtil.getFieldValue(dialog, R.id.bar_code));
+        double price = Double.parseDouble(DialogUtil.getFieldValue(dialog, R.id.price));
 
         return new FixedAsset();
     }
 
-    private void onOpenScanner(View view) {
-        Toast.makeText(getContext(), "Open scanner", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onScannerOpen(View view) {
+
+    }
+
+    @Override
+    public void onImagePickerOpen(View view) {
+
+    }
+
+    @Override
+    public void onCameraOpen(View view) {
+
     }
 }

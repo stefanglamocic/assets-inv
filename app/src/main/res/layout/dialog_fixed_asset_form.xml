@@ -2,33 +2,48 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/margin_large">
 
     <EditText
         android:id="@+id/fixed_asset_name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent="0.6"
         android:layout_marginTop="@dimen/margin_large"
         android:layout_marginHorizontal="@dimen/margin_med"
         android:hint="@string/name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/price"
         android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_med"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/price"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fixed_asset_name"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/fixed_asset_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxHeight="@dimen/desc_max_height"
-        android:layout_marginTop="@dimen/margin_med"
         android:layout_marginHorizontal="@dimen/margin_med"
+        android:layout_marginTop="@dimen/margin_med"
         android:hint="@string/description"
-        app:layout_constraintTop_toBottomOf="@id/fixed_asset_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"/>
+        android:maxHeight="@dimen/desc_max_height"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fixed_asset_name" />
 
     <EditText
         android:id="@+id/bar_code"
@@ -45,12 +60,120 @@
     <ImageButton
         android:id="@+id/scan_bar_code"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:src="@drawable/ic_barcode_scanner"
         android:layout_marginTop="@dimen/margin_med"
         android:layout_marginEnd="@dimen/margin_med"
         app:layout_constraintStart_toEndOf="@id/bar_code"
         app:layout_constraintTop_toBottomOf="@id/fixed_asset_desc"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/img_text"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:text="@string/row_img"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/margin_med"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="@dimen/margin_med"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bar_code"
+        app:layout_constraintBottom_toBottomOf="@id/add_image"
+        />
+
+    <TextView
+        android:id="@+id/fixed_asset_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/margin_med"
+        app:layout_constraintStart_toEndOf="@id/img_text"
+        app:layout_constraintTop_toBottomOf="@id/bar_code"
+        app:layout_constraintEnd_toStartOf="@id/add_image"
+        app:layout_constraintBottom_toBottomOf="@id/add_image"
+        android:layout_marginStart="@dimen/padding_small"
+        android:layout_marginEnd="@dimen/padding_small"
+        android:maxLines="1"
+        android:ellipsize="start"
+        android:gravity="start|center_vertical"
+        android:textAlignment="viewStart"
+        android:text="@string/no_image"/>
+
+    <ImageButton
+        android:id="@+id/take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/scan_bar_code"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/margin_med"
+        android:layout_marginEnd="@dimen/margin_med"
+        android:src="@drawable/ic_camera"
+        />
+
+    <ImageButton
+        android:id="@+id/add_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_med"
+        android:layout_marginEnd="@dimen/padding_small"
+        app:layout_constraintTop_toBottomOf="@id/scan_bar_code"
+        app:layout_constraintEnd_toStartOf="@id/take_photo"
+        app:layout_constraintStart_toEndOf="@id/fixed_asset_image"
+        android:src="@drawable/ic_image"
+
+        />
+
+    <TextView
+        android:id="@+id/location_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_med"
+        android:layout_marginTop="@dimen/margin_med"
+        android:text="@string/location"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/img_text"/>
+
+    <Spinner
+        android:id="@+id/locations_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_med"
+        android:layout_marginStart="@dimen/padding_small"
+        android:layout_marginEnd="@dimen/margin_med"
+        app:layout_constraintStart_toEndOf="@id/location_text"
+        app:layout_constraintTop_toBottomOf="@id/fixed_asset_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/employee_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/employees"
+        android:textSize="18sp"
+        android:layout_marginStart="@dimen/margin_med"
+        android:layout_marginTop="@dimen/margin_med"
+        app:layout_constraintTop_toBottomOf="@id/location_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <Spinner
+        android:id="@+id/employees_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_small"
+        android:layout_marginTop="@dimen/margin_med"
+        android:layout_marginEnd="@dimen/margin_med"
+        app:layout_constraintTop_toBottomOf="@id/locations_spinner"
+        app:layout_constraintStart_toEndOf="@id/employee_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

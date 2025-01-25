@@ -25,4 +25,9 @@
     <string name="bar_code">Bar kod</string>
     <string name="details">Detalji</string>
     <string name="ok">OK</string>
+    <string name="price">Cijena</string>
+    <string name="add_image">Dodaj fotografiju</string>
+    <string name="camera">Kamera</string>
+    <string name="no_image">nije izabrana</string>
+    <string name="location">Lokacija</string>
 </resources>

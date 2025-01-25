@@ -59,6 +59,7 @@ dependencies {
     implementation "androidx.room:room-rxjava3:$room_version"
 
     implementation libs.play.services.maps
+    implementation libs.zxing.android.embedded
 }
 
 secrets {

@@ -25,4 +25,9 @@
     <string name="bar_code">Bar code</string>
     <string name="details">Details</string>
     <string name="ok">OK</string>
+    <string name="price">Price</string>
+    <string name="add_image">Add image</string>
+    <string name="camera">Camera</string>
+    <string name="no_image">no image</string>
+    <string name="location">Location</string>
 </resources>

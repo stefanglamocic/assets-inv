@@ -29,9 +29,12 @@ public class AddEntityDialog extends DialogFragment
         implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
+    //listeners
     DialogListener listener;
-    private View.OnClickListener scanButtonListener;
+    private FixedAssetsButtonsListener formButtonsListener;
     private MapReadyListener mapReadyListener;
+
+    //map
     private MapView mapView;
     protected GoogleMap map;
     protected LatLng currentPosition = new LatLng(44.772182, 17.191000);
@@ -44,8 +47,17 @@ public class AddEntityDialog extends DialogFragment
             listener = (DialogListener) getParentFragment();
         } catch (ClassCastException e) {
             throw new ClassCastException(getParentFragment() +
-                    " must implement DialogListener!");
+                    " must implement " + DialogListener.class.getName());
         }
+    }
+
+    private void initFixedAssetsDialog(View dialogView) {
+        ImageButton scanButton = dialogView.findViewById(R.id.scan_bar_code);
+        scanButton.setOnClickListener(formButtonsListener::onScannerOpen);
+        ImageButton addImageButton = dialogView.findViewById(R.id.add_image);
+        addImageButton.setOnClickListener(formButtonsListener::onImagePickerOpen);
+        ImageButton cameraButton = dialogView.findViewById(R.id.take_photo);
+        cameraButton.setOnClickListener(formButtonsListener::onCameraOpen);
     }
 
     @SuppressLint("MissingInflatedId")
@@ -54,19 +66,28 @@ public class AddEntityDialog extends DialogFragment
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-
         View dialogView = inflater.inflate(R.layout.dialog_fixed_asset_form, null);
-
         Fragment parentFragment = getParentFragment();
+
         if (parentFragment instanceof FixedAssetsFragment) {
-            ImageButton scanButton = dialogView.findViewById(R.id.scan_bar_code);
-            scanButton.setOnClickListener(scanButtonListener);
+            try {
+                formButtonsListener = (FixedAssetsButtonsListener) parentFragment;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(FixedAssetsFragment.class.getName() + " must implement " +
+                        FixedAssetsButtonsListener.class.getName());
+            }
+            initFixedAssetsDialog(dialogView);
         }
         else if (parentFragment instanceof EmployeesFragment) {
             dialogView = inflater.inflate(R.layout.dialog_employee_form, null);
         }
         else if (parentFragment instanceof LocationsFragment) {
-            mapReadyListener = (MapReadyListener) parentFragment;
+            try {
+                mapReadyListener = (MapReadyListener) parentFragment;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(LocationsFragment.class.getName() + " must implement " +
+                        MapReadyListener.class.getName());
+            }
             dialogView = inflater.inflate(R.layout.dialog_location, null);
 
             Bundle mapViewBundle = null;
@@ -105,10 +126,6 @@ public class AddEntityDialog extends DialogFragment
         mapView.onSaveInstanceState(mapViewBundle);
     }
 
-    public void setScanButtonListener(View.OnClickListener scanButtonListener) {
-        this.scanButtonListener = scanButtonListener;
-    }
-
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
@@ -141,5 +158,11 @@ public class AddEntityDialog extends DialogFragment
 
     public interface MapReadyListener {
         void onMapReady();
+    }
+
+    public interface FixedAssetsButtonsListener {
+        void onScannerOpen(View view);
+        void onImagePickerOpen(View view);
+        void onCameraOpen(View view);
     }
 }

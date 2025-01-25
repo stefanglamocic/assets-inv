@@ -14,6 +14,7 @@ playServicesMaps = "19.0.0"
 rxandroid = "3.0.0"
 secretsGradlePlugin = "2.0.1"
 viewpager2 = "1.1.0"
+zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -33,6 +34,7 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
