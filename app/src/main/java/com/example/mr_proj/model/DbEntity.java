@@ -1,5 +1,6 @@
 package com.example.mr_proj.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
@@ -22,5 +23,11 @@ public abstract class DbEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getRowText();
     }
 }

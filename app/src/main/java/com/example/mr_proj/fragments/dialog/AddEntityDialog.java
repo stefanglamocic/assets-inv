@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +20,16 @@ import com.example.mr_proj.R;
 import com.example.mr_proj.fragments.main.EmployeesFragment;
 import com.example.mr_proj.fragments.main.FixedAssetsFragment;
 import com.example.mr_proj.fragments.main.LocationsFragment;
+import com.example.mr_proj.service.DAOService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public class AddEntityDialog extends DialogFragment
         implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -39,6 +45,8 @@ public class AddEntityDialog extends DialogFragment
     protected GoogleMap map;
     protected LatLng currentPosition = new LatLng(44.772182, 17.191000);
 
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -51,13 +59,21 @@ public class AddEntityDialog extends DialogFragment
         }
     }
 
-    private void initFixedAssetsDialog(View dialogView) {
+    private void initFixedAssetsDialog(View dialogView, Fragment parentFragment) {
         ImageButton scanButton = dialogView.findViewById(R.id.scan_bar_code);
         scanButton.setOnClickListener(formButtonsListener::onScannerOpen);
         ImageButton addImageButton = dialogView.findViewById(R.id.add_image);
         addImageButton.setOnClickListener(formButtonsListener::onImagePickerOpen);
         ImageButton cameraButton = dialogView.findViewById(R.id.take_photo);
         cameraButton.setOnClickListener(formButtonsListener::onCameraOpen);
+
+        FixedAssetsFragment fragment = (FixedAssetsFragment) parentFragment;
+        Spinner locationsSpinner = dialogView.findViewById(R.id.locations_spinner);
+        Disposable ld = DAOService.populateSpinner(fragment.getLocationDAO(), locationsSpinner);
+        compositeDisposable.add(ld);
+        Spinner employeesSpinner = dialogView.findViewById(R.id.employees_spinner);
+        Disposable ed = DAOService.populateSpinner(fragment.getEmployeeDAO(), employeesSpinner);
+        compositeDisposable.add(ed);
     }
 
     @SuppressLint("MissingInflatedId")
@@ -76,7 +92,7 @@ public class AddEntityDialog extends DialogFragment
                 throw new ClassCastException(FixedAssetsFragment.class.getName() + " must implement " +
                         FixedAssetsButtonsListener.class.getName());
             }
-            initFixedAssetsDialog(dialogView);
+            initFixedAssetsDialog(dialogView, parentFragment);
         }
         else if (parentFragment instanceof EmployeesFragment) {
             dialogView = inflater.inflate(R.layout.dialog_employee_form, null);
@@ -147,6 +163,18 @@ public class AddEntityDialog extends DialogFragment
         map.addMarker(new MarkerOptions()
                 .position(latLng));
         currentPosition = latLng;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        compositeDisposable.clear();
+    }
+
+    @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
+        compositeDisposable.clear();
     }
 
     public LatLng getCurrentPosition() { return currentPosition; }

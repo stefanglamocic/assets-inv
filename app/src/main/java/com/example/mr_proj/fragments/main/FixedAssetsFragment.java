@@ -10,19 +10,30 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mr_proj.R;
+import com.example.mr_proj.dao.EmployeeDAO;
+import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.model.FixedAsset;
+import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     implements AddEntityDialog.DialogListener, AddEntityDialog.FixedAssetsButtonsListener {
+    //dao
+    private EmployeeDAO employeeDAO;
+    private LocationDAO locationDAO;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_fixed_assets, container, false);
+
+        AppDatabase db = DatabaseUtil.getDbInstance(requireContext());
+        employeeDAO = db.employeeDAO();
+        locationDAO = db.locationDAO();
 
         FloatingActionButton addBtn = root.findViewById(R.id.add_btn);
         addBtn.setOnClickListener(this::onAdd);
@@ -70,5 +81,13 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     @Override
     public void onCameraOpen(View view) {
 
+    }
+
+    public EmployeeDAO getEmployeeDAO() {
+        return employeeDAO;
+    }
+
+    public LocationDAO getLocationDAO() {
+        return locationDAO;
     }
 }

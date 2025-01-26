@@ -1,8 +1,11 @@
 package com.example.mr_proj.service;
 
 import android.annotation.SuppressLint;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.example.mr_proj.adapter.ListAdapter;
+import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.model.DbEntity;
 
 import java.util.List;
@@ -20,6 +23,21 @@ public class DAOService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listAdapter::notifyAdapter);
+    }
+
+    public static <T extends DbEntity> Disposable populateSpinner(IDAO<T> dao, Spinner spinner) {
+        return dao.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    ArrayAdapter<T> adapter = new ArrayAdapter<>(
+                            spinner.getContext(),
+                            android.R.layout.simple_spinner_item,
+                            list
+                    );
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+                });
     }
 
     public static <T extends DbEntity> Disposable insertEntity(T entity, ListAdapter<T> listAdapter) {
