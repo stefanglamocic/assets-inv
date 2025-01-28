@@ -60,6 +60,7 @@ dependencies {
 
     implementation libs.play.services.maps
     implementation libs.zxing.android.embedded
+    implementation libs.glide
 }
 
 secrets {

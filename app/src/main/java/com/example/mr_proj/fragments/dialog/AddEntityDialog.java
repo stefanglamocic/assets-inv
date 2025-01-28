@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,6 +194,18 @@ public class AddEntityDialog extends DialogFragment
         else {
             Toast.makeText(requireContext(), "Scanning error", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setMedia(Uri uri) {
+        if (uri == null)
+            return;
+
+        if (getDialog() != null) {
+            EditText imagePath = getDialog().findViewById(R.id.fixed_asset_image);
+            imagePath.setText(uri.toString());
+        }
+
+        //TODO: set ImageView to visible and set the image
     }
 
     public LatLng getCurrentPosition() { return currentPosition; }

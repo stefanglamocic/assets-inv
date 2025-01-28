@@ -3,6 +3,8 @@ package com.example.mr_proj.fragments.main;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.DialogFragment;
 
 import android.util.Log;
@@ -41,7 +43,10 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     private LocationDAO locationDAO;
 
     private final AddEntityDialog dialog = new AddEntityDialog();
+
+    //activity result
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +64,7 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         disposables.add(d);
 
         barcodeLauncher = registerForActivityResult(new ScanContract(), dialog::setBarcodeField);
+        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), dialog::setMedia);
 
         FloatingActionButton addBtn = root.findViewById(R.id.add_btn);
         addBtn.setOnClickListener(this::onAdd);
@@ -110,7 +116,9 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onImagePickerOpen(View view) {
-
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 
     @Override
