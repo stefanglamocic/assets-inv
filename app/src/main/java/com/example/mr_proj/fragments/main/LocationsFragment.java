@@ -40,6 +40,7 @@ public class LocationsFragment extends BaseFragment<Location>
         AddEntityDialog.MapReadyListener,
         RemoveEntityDialog.RemoveDialogListener {
     private ProgressBar loadingSpinner;
+    private final AddEntityDialog dialog = new AddEntityDialog();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,7 +65,6 @@ public class LocationsFragment extends BaseFragment<Location>
 
     private void onOpenDialog(View view) {
         loadingSpinner.setVisibility(View.VISIBLE);
-        AddEntityDialog dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addLocation");
     }
 

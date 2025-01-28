@@ -2,29 +2,46 @@ package com.example.mr_proj.fragments.main;
 
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.fragment.app.DialogFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mr_proj.R;
+import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
+import com.example.mr_proj.dao.FixedAssetDAO;
 import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
+import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
+import com.example.mr_proj.model.Location;
+import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
+import io.reactivex.rxjava3.disposables.Disposable;
 
 
 public class FixedAssetsFragment extends BaseFragment<FixedAsset>
-    implements AddEntityDialog.DialogListener, AddEntityDialog.FixedAssetsButtonsListener {
+    implements AddEntityDialog.DialogListener,
+        AddEntityDialog.FixedAssetsButtonsListener,
+        RemoveEntityDialog.RemoveDialogListener {
     //dao
     private EmployeeDAO employeeDAO;
     private LocationDAO locationDAO;
+
+    private final AddEntityDialog dialog = new AddEntityDialog();
+    private ActivityResultLauncher<ScanOptions> barcodeLauncher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +51,14 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         AppDatabase db = DatabaseUtil.getDbInstance(requireContext());
         employeeDAO = db.employeeDAO();
         locationDAO = db.locationDAO();
+        FixedAssetDAO fixedAssetDAO = db.fixedAssetDAO();
+
+        listAdapter = new ListAdapter<>(fixedAssetDAO, this);
+        listAdapter.setRowClickListener(this::onItemSelect);
+        Disposable d = DAOService.getEntities(listAdapter);
+        disposables.add(d);
+
+        barcodeLauncher = registerForActivityResult(new ScanContract(), dialog::setBarcodeField);
 
         FloatingActionButton addBtn = root.findViewById(R.id.add_btn);
         addBtn.setOnClickListener(this::onAdd);
@@ -42,7 +67,6 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     }
 
     private void onAdd(View view) {
-        AddEntityDialog dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addFixedAsset");
     }
 
@@ -64,13 +88,24 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         String desc = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_desc);
         int barCode = Integer.parseInt(DialogUtil.getFieldValue(dialog, R.id.bar_code));
         double price = Double.parseDouble(DialogUtil.getFieldValue(dialog, R.id.price));
+        Location location = (Location)DialogUtil.getObjectFromSpinner(dialog, R.id.locations_spinner);
+        Employee employee = (Employee) DialogUtil.getObjectFromSpinner(dialog, R.id.employees_spinner);
 
         return new FixedAsset();
     }
 
     @Override
-    public void onScannerOpen(View view) {
+    public void onPositiveClick(DialogFragment dialog) { //entity deletion
 
+    }
+
+    @Override
+    public void onScannerOpen(View view) {
+        ScanOptions scanOptions = new ScanOptions();
+        String notice = getString(R.string.scan_barcode);
+        scanOptions.setPrompt(notice);
+        scanOptions.setOrientationLocked(false);
+        barcodeLauncher.launch(scanOptions);
     }
 
     @Override
@@ -80,6 +115,10 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onCameraOpen(View view) {
+
+    }
+
+    private void onItemSelect(FixedAsset fixedAsset) { //display fixed asset details
 
     }
 

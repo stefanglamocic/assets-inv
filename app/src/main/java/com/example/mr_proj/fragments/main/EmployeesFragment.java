@@ -30,6 +30,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public class EmployeesFragment extends BaseFragment<Employee>
         implements AddEntityDialog.DialogListener,
             RemoveEntityDialog.RemoveDialogListener {
+    private final DialogFragment dialog = new AddEntityDialog();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,7 +51,6 @@ public class EmployeesFragment extends BaseFragment<Employee>
     }
 
     private void onAddEmployee(View view) {
-        DialogFragment dialog = new AddEntityDialog();
         dialog.show(getChildFragmentManager(), "addEmployee");
     }
 

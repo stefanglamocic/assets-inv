@@ -30,4 +30,5 @@
     <string name="camera">Camera</string>
     <string name="no_image">no image</string>
     <string name="location">Location</string>
+    <string name="scan_barcode">Scan the barcode</string>
 </resources>

@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +29,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.journeyapps.barcodescanner.ScanIntentResult;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -139,7 +142,8 @@ public class AddEntityDialog extends DialogFragment
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
 
-        mapView.onSaveInstanceState(mapViewBundle);
+        if (mapView != null)
+            mapView.onSaveInstanceState(mapViewBundle);
     }
 
     @Override
@@ -175,6 +179,20 @@ public class AddEntityDialog extends DialogFragment
     public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         compositeDisposable.clear();
+    }
+
+    public void setBarcodeField(ScanIntentResult result) {
+        if (result == null)
+            return;
+
+        String barcode = result.getContents();
+        if (getDialog() != null) {
+            EditText field = getDialog().findViewById(R.id.bar_code);
+            field.setText(barcode);
+        }
+        else {
+            Toast.makeText(requireContext(), "Scanning error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public LatLng getCurrentPosition() { return currentPosition; }
