@@ -45,7 +45,8 @@ public class DAOService {
                 .insert(entity)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
+                .subscribe(id -> {
+                    entity.id = id.intValue();
                     listAdapter.getEntities().add(entity);
                     listAdapter.notifyItemInserted(listAdapter.getItemCount() - 1);
                 });

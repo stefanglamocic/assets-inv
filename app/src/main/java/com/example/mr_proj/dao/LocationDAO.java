@@ -12,11 +12,12 @@ import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface LocationDAO extends IDAO<Location> {
     @Insert
-    Completable insert(Location location);
+    Single<Long> insert(Location location);
 
     @Update
     Completable update(Location location);

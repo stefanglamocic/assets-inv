@@ -12,6 +12,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 //ako treba vratiti DTO
 //https://developer.android.com/training/data-storage/room/accessing-data#return-subset
@@ -19,7 +20,7 @@ import io.reactivex.rxjava3.core.Flowable;
 @Dao
 public interface FixedAssetDAO extends IDAO<FixedAsset>{
     @Insert
-    Completable insert(FixedAsset asset);
+    Single<Long> insert(FixedAsset asset);
 
     @Query("SELECT * FROM fixed_asset")
     Flowable<List<FixedAsset>> getAll();

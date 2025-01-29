@@ -12,11 +12,12 @@ import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface EmployeeDAO extends IDAO<Employee>{
     @Insert
-    Completable insert(Employee employee);
+    Single<Long> insert(Employee employee);
 
     @Query("SELECT * FROM employee")
     Flowable<List<Employee>> getAll();
