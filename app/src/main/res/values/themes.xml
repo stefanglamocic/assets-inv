@@ -12,7 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
-        <item name="android:tint">@color/cool_grey</item>
+<!--        <item name="android:tint">@color/cool_grey</item>-->
     </style>
 
     <style name="MainToolbar">
@@ -26,6 +26,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_grey</item>
         <item name="android:drawableTint">@color/text_grey</item>
+    </style>
+
+    <style name="ImageButton">
+        <item name="android:tint">@color/cool_grey</item>
     </style>
 
 </resources>

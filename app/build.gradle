@@ -61,6 +61,7 @@ dependencies {
     implementation libs.play.services.maps
     implementation libs.zxing.android.embedded
     implementation libs.glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 }
 
 secrets {

@@ -18,6 +18,7 @@ viewpager2 = "1.1.0"
 zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 datastore-preferences-rxjava3 = { module = "androidx.datastore:datastore-preferences-rxjava3", version.ref = "datastorePreferences" }
 datastore-rxjava2 = { module = "androidx.datastore:datastore-rxjava2", version.ref = "datastorePreferences" }

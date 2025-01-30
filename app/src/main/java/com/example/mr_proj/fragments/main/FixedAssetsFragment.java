@@ -1,11 +1,14 @@
 package com.example.mr_proj.fragments.main;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +24,7 @@ import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
+import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
@@ -47,6 +51,9 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     //activity result
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+    private ActivityResultLauncher<Uri> takePhotoLauncher;
+
+    private Uri photoUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,8 +70,16 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         Disposable d = DAOService.getEntities(listAdapter);
         disposables.add(d);
 
+        RecyclerView fixedAssetsRecyclerView = root.findViewById(R.id.fixed_assets_list);
+        fixedAssetsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        fixedAssetsRecyclerView.setAdapter(listAdapter);
+
         barcodeLauncher = registerForActivityResult(new ScanContract(), dialog::setBarcodeField);
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), dialog::setMedia);
+        takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), photoTaken -> {
+            if (photoTaken)
+                dialog.setMedia(photoUri);
+        });
 
         FloatingActionButton addBtn = root.findViewById(R.id.add_btn);
         addBtn.setOnClickListener(this::onAdd);
@@ -102,7 +117,12 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onPositiveClick(DialogFragment dialog) { //entity deletion
-
+        RemoveEntityDialog<? extends DbEntity> removeDialog = (RemoveEntityDialog<? extends DbEntity>) dialog;
+        int id = removeDialog.getEntityId();
+        FixedAsset entity = new FixedAsset();
+        entity.id = id;
+        Disposable d = DAOService.deleteEntity(entity, listAdapter);
+        disposables.add(d);
     }
 
     @Override
@@ -123,8 +143,10 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onCameraOpen(View view) {
-
+        //TODO: create image file and set to photoUri...
+        takePhotoLauncher.launch(photoUri);
     }
+
 
     private void onItemSelect(FixedAsset fixedAsset) { //display fixed asset details
 

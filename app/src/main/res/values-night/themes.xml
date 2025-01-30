@@ -12,7 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
-        <item name="android:tint">@color/grey</item>
+<!--        <item name="android:tint">@color/grey</item>-->
     </style>
 
     <style name="OptionTitle">
@@ -22,6 +22,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/grey</item>
         <item name="android:drawableTint">@color/grey</item>
+    </style>
+
+    <style name="ImageButton">
+        <item name="android:tint">@color/grey</item>
     </style>
 
 </resources>

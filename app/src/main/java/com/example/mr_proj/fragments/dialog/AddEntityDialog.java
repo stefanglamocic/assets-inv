@@ -5,13 +5,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.fragments.main.EmployeesFragment;
 import com.example.mr_proj.fragments.main.FixedAssetsFragment;
@@ -31,6 +40,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.journeyapps.barcodescanner.ScanIntentResult;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -201,11 +213,21 @@ public class AddEntityDialog extends DialogFragment
             return;
 
         if (getDialog() != null) {
-            EditText imagePath = getDialog().findViewById(R.id.fixed_asset_image);
+            TextView imagePath = getDialog().findViewById(R.id.fixed_asset_image);
             imagePath.setText(uri.toString());
+            imagePath.setVisibility(View.GONE);
+
+            ImageView imagePreview = getDialog().findViewById(R.id.fixed_asset_image_preview);
+            imagePreview.setVisibility(View.VISIBLE);
+//            imagePreview.setImageResource(R.drawable.ic_settings);
+//            imagePreview.setImageURI(uri);
+
+            Glide
+                    .with(requireContext())
+                    .load(uri)
+                    .into(imagePreview);
         }
 
-        //TODO: set ImageView to visible and set the image
     }
 
     public LatLng getCurrentPosition() { return currentPosition; }
