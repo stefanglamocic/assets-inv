@@ -30,4 +30,7 @@
     <string name="no_image">nije izabrana</string>
     <string name="location">Lokacija</string>
     <string name="scan_barcode">Skeniraj barkod</string>
+    <string name="camera_permission_notice">Da bi pristupili kameri morate odobriti dozvolu za kameru u sistemskim opcijama</string>
+    <string name="camera_permission_title">Dozvola korištenja kamere</string>
+    <string name="camera_permission_message">Kako bi mogli koristiti ovu mogućnost, dozvolite aplikaciji korištenje kamere.</string>
 </resources>

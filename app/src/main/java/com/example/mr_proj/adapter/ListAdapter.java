@@ -2,8 +2,7 @@ package com.example.mr_proj.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAdapter.RowHolder>{
-    private static final String IS_PREFIX = "/data/data"; // internal storage file path prefix
+    private static final String ICON_PREFIX = "ic_"; // internal storage file path prefix
 
     private final List<T> entities = new ArrayList<>();
     private final IDAO<T> dao;
@@ -102,15 +102,18 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
         if (imgPath == null)
             return;
 
-        if (imgPath.startsWith(IS_PREFIX)) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
-            imageView.setImageBitmap(bitmap);
-        }
-        else {
+        if (imgPath.startsWith(ICON_PREFIX)) {
             Context context = imageView.getContext().getApplicationContext();
             @SuppressLint("DiscouragedApi")
             int resId = context.getResources().getIdentifier(imgPath, "drawable", context.getPackageName());
             imageView.setImageResource(resId);
+        }
+        else {
+            Glide
+                    .with(fragment)
+                    .load(Uri.parse(imgPath))
+                    .centerCrop()
+                    .into(imageView);
         }
     }
 

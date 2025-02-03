@@ -31,4 +31,7 @@
     <string name="no_image">no image</string>
     <string name="location">Location</string>
     <string name="scan_barcode">Scan the barcode</string>
+    <string name="camera_permission_notice">To access the camera, you need to grant the camera permission in the system settings</string>
+    <string name="camera_permission_title">Permission to access the camera</string>
+    <string name="camera_permission_message">To use this feature, you need to grant the camera permission.</string>
 </resources>

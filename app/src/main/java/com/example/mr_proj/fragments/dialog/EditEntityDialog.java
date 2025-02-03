@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.example.mr_proj.R;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
+import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,19 +41,34 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     private void setControls(AlertDialog dialog) {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> listener.onEditPositiveClick(EditEntityDialog.this));
         if (entity instanceof Employee) {
-            Employee employee = (Employee)entity;
-            EditText firstNameET = dialog.findViewById(R.id.firstName);
-            EditText lastNameET = dialog.findViewById(R.id.lastName);
-            firstNameET.setText(employee.firstName);
-            lastNameET.setText(employee.lastName);
+            setEmployeeControls(dialog);
         }
-        if (entity instanceof Location) {
-            Location location = (Location) entity;
-            currentPosition = new LatLng(location.latitude, location.longitude);
-            map.clear();
-            map.addMarker(new MarkerOptions()
-                    .position(currentPosition));
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 9.2f));
+        else if (entity instanceof Location) {
+            setCurrentLocation();
         }
+        else if (entity instanceof FixedAsset) {
+            setFixedAssetControls(dialog);
+        }
+    }
+
+    private void setFixedAssetControls(AlertDialog dialog) {
+        
+    }
+
+    private void setEmployeeControls(AlertDialog dialog) {
+        Employee employee = (Employee)entity;
+        EditText firstNameET = dialog.findViewById(R.id.firstName);
+        EditText lastNameET = dialog.findViewById(R.id.lastName);
+        firstNameET.setText(employee.firstName);
+        lastNameET.setText(employee.lastName);
+    }
+
+    private void setCurrentLocation() {
+        Location location = (Location) entity;
+        currentPosition = new LatLng(location.latitude, location.longitude);
+        map.clear();
+        map.addMarker(new MarkerOptions()
+                .position(currentPosition));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 9.2f));
     }
 }

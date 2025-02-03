@@ -19,6 +19,15 @@
         android:theme="@style/Theme.Mrproj"
         tools:targetApi="31"
         android:hardwareAccelerated="true">
+        <provider
+            android:authorities="com.example.mr_proj.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

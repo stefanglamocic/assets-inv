@@ -3,6 +3,7 @@ package com.example.mr_proj.util;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -16,6 +17,9 @@ public class DialogUtil {
         View field = dialog.getDialog().findViewById(fieldId);
         if (field instanceof EditText) {
             return ((EditText) field).getText().toString().trim();
+        }
+        else if (field instanceof TextView) {
+            return ((TextView) field).getText().toString().trim();
         }
         return null;
     }

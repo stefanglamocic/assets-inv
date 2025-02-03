@@ -5,14 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -39,10 +33,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanIntentResult;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -82,6 +74,8 @@ public class AddEntityDialog extends DialogFragment
         addImageButton.setOnClickListener(formButtonsListener::onImagePickerOpen);
         ImageButton cameraButton = dialogView.findViewById(R.id.take_photo);
         cameraButton.setOnClickListener(formButtonsListener::onCameraOpen);
+        FloatingActionButton cancelFAB = dialogView.findViewById(R.id.cancel_image);
+        cancelFAB.setOnClickListener(this::cancelImage);
 
         FixedAssetsFragment fragment = (FixedAssetsFragment) parentFragment;
         Spinner locationsSpinner = dialogView.findViewById(R.id.locations_spinner);
@@ -219,8 +213,9 @@ public class AddEntityDialog extends DialogFragment
 
             ImageView imagePreview = getDialog().findViewById(R.id.fixed_asset_image_preview);
             imagePreview.setVisibility(View.VISIBLE);
-//            imagePreview.setImageResource(R.drawable.ic_settings);
-//            imagePreview.setImageURI(uri);
+
+            FloatingActionButton cancelFAB = getDialog().findViewById(R.id.cancel_image);
+            cancelFAB.setVisibility(View.VISIBLE);
 
             Glide
                     .with(requireContext())
@@ -228,6 +223,20 @@ public class AddEntityDialog extends DialogFragment
                     .into(imagePreview);
         }
 
+    }
+
+    private void cancelImage(View view) {
+        View rootView = view.getRootView();
+        String cancelString = getString(R.string.no_image);
+
+        TextView imagePath = rootView.findViewById(R.id.fixed_asset_image);
+        imagePath.setText(cancelString);
+        imagePath.setVisibility(View.VISIBLE);
+
+        ImageView image = rootView.findViewById(R.id.fixed_asset_image_preview);
+        image.setVisibility(View.GONE);
+
+        view.setVisibility(View.GONE);
     }
 
     public LatLng getCurrentPosition() { return currentPosition; }

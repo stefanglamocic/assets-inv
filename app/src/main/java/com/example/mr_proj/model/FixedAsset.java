@@ -20,6 +20,20 @@ public class FixedAsset extends DbEntity{
     @ColumnInfo(name = "employee_id")
     public int employeeId;
 
+    public FixedAsset() {
+        super();
+    }
+
+    public FixedAsset(String name, String description, int barCode, double price, String image, int locationId, int employeeId) {
+        this.name = name;
+        this.description = description;
+        this.barCode = barCode;
+        this.price = price;
+        this.image = image;
+        this.locationId = locationId;
+        this.employeeId = employeeId;
+    }
+
     @Override
     public String getRowText() {
         return name;
