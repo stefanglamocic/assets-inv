@@ -9,10 +9,13 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DataStoreUtil {
     public static final String LANG_KEY = "lang";
@@ -47,10 +50,11 @@ public class DataStoreUtil {
     public static Disposable readPreference(RxDataStore<Preferences> dataStore, String key,
                                             Consumer<String> onSuccess, Consumer<Throwable> onError) {
         Preferences.Key<String> KEY = PreferencesKeys.stringKey(key);
-        Flowable<String> dataFlow =
-                dataStore
-                        .data()
-                        .map(prefs -> prefs.get(KEY));
-        return dataFlow.subscribe(onSuccess, onError);
+        return dataStore
+                .data()
+                .map(prefs -> prefs.get(KEY))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onSuccess, onError);
     }
 }
