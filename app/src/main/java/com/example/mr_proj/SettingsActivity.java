@@ -15,12 +15,13 @@ import androidx.datastore.rxjava3.RxDataStore;
 import com.example.mr_proj.util.DataStoreUtil;
 import com.example.mr_proj.util.Language;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class SettingsActivity extends AppCompatActivity {
     private volatile Language lang;
     private RxDataStore<Preferences> dataStore;
-    private Disposable disposable;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +37,18 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         RadioGroup languagesGroup = findViewById(R.id.rg_languages);
+        languagesGroup.setOnCheckedChangeListener(this::onLanguageChange);
 
-        disposable = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
+        Disposable d = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
                 data -> setLang(Language.getLanguage(data), languagesGroup),
                 err -> setLang(Language.SERBIAN, languagesGroup));
-
-        languagesGroup.setOnCheckedChangeListener(this::onLanguageChange);
+        disposables.add(d);
     }
 
 
     private void setLang(Language lang, RadioGroup group) {
         this.lang = lang;
-        runOnUiThread(() -> group.check(lang.getId()));
+        group.check(lang.getId());
     }
 
     @Override
@@ -59,10 +60,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        DataStoreUtil.writePreference(dataStore, DataStoreUtil.LANG_KEY, lang.toString());
-
-        if (disposable != null && !disposable.isDisposed())
-            disposable.dispose();
+        Disposable d = DataStoreUtil.writePreference(dataStore, DataStoreUtil.LANG_KEY, lang.toString());
+        disposables.add(d);
+        disposables.clear();
 
         super.onDestroy();
     }

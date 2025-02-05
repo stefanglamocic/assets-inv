@@ -2,12 +2,18 @@ package com.example.mr_proj.fragments.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
@@ -16,6 +22,7 @@ import com.example.mr_proj.model.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     private final T entity;
@@ -52,7 +59,41 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     }
 
     private void setFixedAssetControls(AlertDialog dialog) {
-        
+        FixedAsset fixedAsset = (FixedAsset) entity;
+
+        EditText faName = dialog.findViewById(R.id.fixed_asset_name);
+        faName.setText(fixedAsset.name);
+        EditText faPrice = dialog.findViewById(R.id.price);
+        faPrice.setText(String.valueOf(fixedAsset.price));
+        EditText faDesc = dialog.findViewById(R.id.fixed_asset_desc);
+        faDesc.setText(fixedAsset.description);
+        EditText faBarCode = dialog.findViewById(R.id.bar_code);
+        faBarCode.setText(String.valueOf(fixedAsset.barCode));
+        //image related stuff
+        TextView faImagePath = dialog.findViewById(R.id.fixed_asset_image);
+        ImageView faImagePreview = dialog.findViewById(R.id.fixed_asset_image_preview);
+        FloatingActionButton cancelFab = dialog.findViewById(R.id.cancel_image);
+
+        if (fixedAsset.image == null) {
+            faImagePath.setText(R.string.no_image);
+            faImagePath.setVisibility(View.VISIBLE);
+            faImagePreview.setVisibility(View.GONE);
+            cancelFab.setVisibility(View.GONE);
+        }
+        else {
+            faImagePath.setText(fixedAsset.image);
+            faImagePath.setVisibility(View.GONE);
+            faImagePreview.setVisibility(View.VISIBLE);
+            cancelFab.setVisibility(View.VISIBLE);
+
+            Glide
+                    .with(requireContext())
+                    .load(Uri.parse(fixedAsset.image))
+                    .into(faImagePreview);
+        }
+        //spinners
+        Spinner faLocation = dialog.findViewById(R.id.locations_spinner);
+        Spinner faEmployee = dialog.findViewById(R.id.employees_spinner);
     }
 
     private void setEmployeeControls(AlertDialog dialog) {

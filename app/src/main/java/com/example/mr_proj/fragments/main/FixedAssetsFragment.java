@@ -2,6 +2,7 @@ package com.example.mr_proj.fragments.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,8 +22,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
@@ -36,10 +41,12 @@ import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
 import com.example.mr_proj.service.DAOService;
+import com.example.mr_proj.util.Converters;
 import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.io.File;
@@ -86,13 +93,13 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         fixedAssetsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fixedAssetsRecyclerView.setAdapter(listAdapter);
 
-        barcodeLauncher = registerForActivityResult(new ScanContract(), dialog::setBarcodeField);
-        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), dialog::setMedia);
+        barcodeLauncher = registerForActivityResult(new ScanContract(), this::setBarcodeField);
+        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::setMedia);
         cameraPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                 this::checkCameraPermission);
         takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), photoTaken -> {
             if (photoTaken)
-                dialog.setMedia(photoUri);
+                setMedia(photoUri);
         });
 
         FloatingActionButton addBtn = root.findViewById(R.id.add_btn);
@@ -141,13 +148,13 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         Location location = (Location)DialogUtil.getObjectFromSpinner(dialog, R.id.locations_spinner);
         Employee employee = (Employee) DialogUtil.getObjectFromSpinner(dialog, R.id.employees_spinner);
         String image = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_image);
-//        Log.d("FixedAssetsFragment", Boolean.toString(image == null));
         if (getString(R.string.no_image).equals(image)) //if the image is not selected in the dialog form
             image = null;
 
-        assert location != null;
-        assert employee != null;
-        return new FixedAsset(name, desc, barCode, price, image, location.id, employee.id);
+        int locationId = (location == null) ? 0 : location.id;
+        int employeeId = (employee == null) ? 0 : employee.id;
+
+        return new FixedAsset(name, desc, barCode, price, image, locationId, employeeId);
     }
 
     @Override
@@ -220,9 +227,56 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         takePhotoLauncher.launch(photoUri);
     }
 
+    private void setMedia(Uri uri) {
+        if (uri == null)
+            return;
+
+        Dialog currentDialog = getCurrentDialog().getDialog();
+
+        if (currentDialog != null) {
+            TextView imagePath = currentDialog.findViewById(R.id.fixed_asset_image);
+            imagePath.setText(uri.toString());
+            imagePath.setVisibility(View.GONE);
+
+            ImageView imagePreview = currentDialog.findViewById(R.id.fixed_asset_image_preview);
+            imagePreview.setVisibility(View.VISIBLE);
+
+            FloatingActionButton cancelFAB = currentDialog.findViewById(R.id.cancel_image);
+            cancelFAB.setVisibility(View.VISIBLE);
+
+            Glide
+                    .with(requireContext())
+                    .load(uri)
+                    .into(imagePreview);
+        }
+    }
+
+    private void setBarcodeField(ScanIntentResult result) {
+        if (result == null)
+            return;
+
+        Dialog currentDialog = getCurrentDialog().getDialog();
+
+        String barcode = result.getContents();
+        if (currentDialog != null) {
+            EditText field = currentDialog.findViewById(R.id.bar_code);
+            field.setText(barcode);
+        }
+        else {
+            Toast.makeText(requireContext(), "Scanning error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private DialogFragment getCurrentDialog() {
+        DialogFragment editDialog = (DialogFragment) getChildFragmentManager().findFragmentByTag("longClickDialog");
+        DialogFragment addDialog = (DialogFragment) getChildFragmentManager().findFragmentByTag("addFixedAsset");
+
+        return addDialog != null ? addDialog : editDialog;
+    }
+
 
     private void onItemSelect(FixedAsset fixedAsset) { //display fixed asset details
-
+        //Toast.makeText(getContext(), Converters.formatDate(fixedAsset.creationDate), Toast.LENGTH_SHORT).show();
     }
 
     public EmployeeDAO getEmployeeDAO() {

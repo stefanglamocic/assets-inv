@@ -24,4 +24,8 @@ public class Converters {
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         return f.format(date);
     }
+
+    public static String formatDate(Long date) {
+        return formatDate(toDate(date));
+    }
 }

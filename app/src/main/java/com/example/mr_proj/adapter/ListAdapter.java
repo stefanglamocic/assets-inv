@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAdapter.RowHolder>{
-    private static final String ICON_PREFIX = "ic_"; // internal storage file path prefix
+    private static final String ICON_PREFIX = "ic_";
 
     private final List<T> entities = new ArrayList<>();
     private final IDAO<T> dao;

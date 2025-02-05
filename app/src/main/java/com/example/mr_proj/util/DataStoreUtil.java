@@ -10,8 +10,6 @@ import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
@@ -37,14 +35,16 @@ public class DataStoreUtil {
             dataStore.dispose();
     }
 
-    public static void writePreference(RxDataStore<Preferences> dataStore, String key, String value) {
+    public static Disposable writePreference(RxDataStore<Preferences> dataStore, String key, String value) {
         Preferences.Key<String> KEY = PreferencesKeys.stringKey(key);
 
-        dataStore.updateDataAsync(prefsIn -> {
+        return dataStore.updateDataAsync(prefsIn -> {
             MutablePreferences mutablePrefs = prefsIn.toMutablePreferences();
             mutablePrefs.set(KEY, value);
             return Single.just(mutablePrefs);
-        });
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     public static Disposable readPreference(RxDataStore<Preferences> dataStore, String key,

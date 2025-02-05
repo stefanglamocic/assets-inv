@@ -2,6 +2,7 @@ package com.example.mr_proj;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,14 +39,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        RxDataStore<Preferences> dataStore = DataStoreUtil.getDataStoreInstance(getApplicationContext());
-        Disposable disposable = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
-                s -> {
-                    if (s == null) {
-                        setFallbackLang();
-                    }
-                }, err -> setFallbackLang());
-        disposables.add(disposable);
+        loadLanguagePreference();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -127,6 +121,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     break;
             }
         }).attach();
+    }
+
+    private void loadLanguagePreference() {
+        RxDataStore<Preferences> dataStore = DataStoreUtil.getDataStoreInstance(getApplicationContext());
+        Disposable disposable = DataStoreUtil.readPreference(dataStore, DataStoreUtil.LANG_KEY,
+                s -> {
+                    if (s == null) {
+                        setFallbackLang();
+                    }
+                }, err -> setFallbackLang());
+        disposables.add(disposable);
     }
 
     private void setFallbackLang() {

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -186,43 +187,6 @@ public class AddEntityDialog extends DialogFragment
     public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         compositeDisposable.clear();
-    }
-
-    public void setBarcodeField(ScanIntentResult result) {
-        if (result == null)
-            return;
-
-        String barcode = result.getContents();
-        if (getDialog() != null) {
-            EditText field = getDialog().findViewById(R.id.bar_code);
-            field.setText(barcode);
-        }
-        else {
-            Toast.makeText(requireContext(), "Scanning error", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void setMedia(Uri uri) {
-        if (uri == null)
-            return;
-
-        if (getDialog() != null) {
-            TextView imagePath = getDialog().findViewById(R.id.fixed_asset_image);
-            imagePath.setText(uri.toString());
-            imagePath.setVisibility(View.GONE);
-
-            ImageView imagePreview = getDialog().findViewById(R.id.fixed_asset_image_preview);
-            imagePreview.setVisibility(View.VISIBLE);
-
-            FloatingActionButton cancelFAB = getDialog().findViewById(R.id.cancel_image);
-            cancelFAB.setVisibility(View.VISIBLE);
-
-            Glide
-                    .with(requireContext())
-                    .load(uri)
-                    .into(imagePreview);
-        }
-
     }
 
     private void cancelImage(View view) {
