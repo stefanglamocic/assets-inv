@@ -34,6 +34,7 @@ import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.dao.FixedAssetDAO;
 import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.model.DbEntity;
@@ -117,11 +118,10 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         FixedAsset newAsset = extractFromFields(dialog);
         if (newAsset == null) {
             Toast.makeText(getContext(), R.string.form_notice, Toast.LENGTH_SHORT).show();
-
             return;
         }
         newAsset.creationDate = System.currentTimeMillis();
-        Disposable d =DAOService.insertEntity(newAsset, listAdapter);
+        Disposable d = DAOService.insertEntity(newAsset, listAdapter);
         disposables.add(d);
 
         dialog.dismiss();
@@ -129,7 +129,18 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onEditPositiveClick(DialogFragment dialog) {
+        EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
+        FixedAsset oldFixedAsset = (FixedAsset) editDialog.getEntity();
+        FixedAsset newFixedAsset = extractFromFields(dialog);
+        if (newFixedAsset == null) {
+            Toast.makeText(getContext(), R.string.form_notice, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        newFixedAsset.id = oldFixedAsset.id;
+        newFixedAsset.creationDate = oldFixedAsset.creationDate;
+        Disposable d = DAOService.updateEntity(newFixedAsset, listAdapter);
+        disposables.add(d);
         dialog.dismiss();
     }
 

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,8 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     public int getEntityId() {
         return entity.id;
     }
+
+    public T getEntity() { return entity; }
 
     private void setControls(AlertDialog dialog) {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> listener.onEditPositiveClick(EditEntityDialog.this));
@@ -93,7 +96,18 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
         }
         //spinners
         Spinner faLocation = dialog.findViewById(R.id.locations_spinner);
+        setSpinnerItem(faLocation, fixedAsset.locationId);
         Spinner faEmployee = dialog.findViewById(R.id.employees_spinner);
+        setSpinnerItem(faEmployee, fixedAsset.employeeId);
+    }
+
+    private void setSpinnerItem(Spinner spinner, int id) {
+        SpinnerAdapter adapter = spinner.getAdapter();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            DbEntity item = (DbEntity) adapter.getItem(i);
+            if (item.id == id)
+                spinner.setSelection(i);
+        }
     }
 
     private void setEmployeeControls(AlertDialog dialog) {
