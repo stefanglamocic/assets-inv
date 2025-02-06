@@ -2,6 +2,7 @@ package com.example.mr_proj.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,9 +110,10 @@ public class ListAdapter<T extends DbEntity> extends RecyclerView.Adapter<ListAd
             imageView.setImageResource(resId);
         }
         else {
+            Uri uri = Uri.parse(imgPath);
             Glide
                     .with(fragment)
-                    .load(Uri.parse(imgPath))
+                    .load(uri)
                     .centerCrop()
                     .into(imageView);
         }

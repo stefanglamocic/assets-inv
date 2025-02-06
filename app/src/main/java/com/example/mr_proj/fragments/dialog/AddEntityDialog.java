@@ -5,24 +5,19 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.fragments.main.EmployeesFragment;
 import com.example.mr_proj.fragments.main.FixedAssetsFragment;
@@ -35,7 +30,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.journeyapps.barcodescanner.ScanIntentResult;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -66,25 +60,6 @@ public class AddEntityDialog extends DialogFragment
             throw new ClassCastException(getParentFragment() +
                     " must implement " + DialogListener.class.getName());
         }
-    }
-
-    private void initFixedAssetsDialog(View dialogView, Fragment parentFragment) {
-        ImageButton scanButton = dialogView.findViewById(R.id.scan_bar_code);
-        scanButton.setOnClickListener(formButtonsListener::onScannerOpen);
-        ImageButton addImageButton = dialogView.findViewById(R.id.add_image);
-        addImageButton.setOnClickListener(formButtonsListener::onImagePickerOpen);
-        ImageButton cameraButton = dialogView.findViewById(R.id.take_photo);
-        cameraButton.setOnClickListener(formButtonsListener::onCameraOpen);
-        FloatingActionButton cancelFAB = dialogView.findViewById(R.id.cancel_image);
-        cancelFAB.setOnClickListener(this::cancelImage);
-
-        FixedAssetsFragment fragment = (FixedAssetsFragment) parentFragment;
-        Spinner locationsSpinner = dialogView.findViewById(R.id.locations_spinner);
-        Disposable ld = DAOService.populateSpinner(fragment.getLocationDAO(), locationsSpinner);
-        compositeDisposable.add(ld);
-        Spinner employeesSpinner = dialogView.findViewById(R.id.employees_spinner);
-        Disposable ed = DAOService.populateSpinner(fragment.getEmployeeDAO(), employeesSpinner);
-        compositeDisposable.add(ed);
     }
 
     @SuppressLint("MissingInflatedId")
@@ -187,6 +162,25 @@ public class AddEntityDialog extends DialogFragment
     public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         compositeDisposable.clear();
+    }
+
+    private void initFixedAssetsDialog(View dialogView, Fragment parentFragment) {
+        ImageButton scanButton = dialogView.findViewById(R.id.scan_bar_code);
+        scanButton.setOnClickListener(formButtonsListener::onScannerOpen);
+        ImageButton addImageButton = dialogView.findViewById(R.id.add_image);
+        addImageButton.setOnClickListener(formButtonsListener::onImagePickerOpen);
+        ImageButton cameraButton = dialogView.findViewById(R.id.take_photo);
+        cameraButton.setOnClickListener(formButtonsListener::onCameraOpen);
+        FloatingActionButton cancelFAB = dialogView.findViewById(R.id.cancel_image);
+        cancelFAB.setOnClickListener(this::cancelImage);
+
+        FixedAssetsFragment fragment = (FixedAssetsFragment) parentFragment;
+        Spinner locationsSpinner = dialogView.findViewById(R.id.locations_spinner);
+        Disposable ld = DAOService.populateSpinner(fragment.getLocationDAO(), locationsSpinner);
+        compositeDisposable.add(ld);
+        Spinner employeesSpinner = dialogView.findViewById(R.id.employees_spinner);
+        Disposable ed = DAOService.populateSpinner(fragment.getEmployeeDAO(), employeesSpinner);
+        compositeDisposable.add(ed);
     }
 
     private void cancelImage(View view) {

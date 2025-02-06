@@ -4,8 +4,10 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.model.FixedAsset;
 
 import java.util.List;
@@ -33,4 +35,11 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
 
     @Query("SELECT * FROM fixed_asset WHERE name LIKE :query OR description LIKE :query")
     Flowable<List<FixedAsset>> search(String query);
+
+    @Transaction
+    @Query("SELECT * FROM fixed_asset AS fa " +
+            "LEFT JOIN location AS l ON fa.location_id = l.id " +
+            "LEFT JOIN employee AS e ON fa.employee_id = e.id " +
+            "WHERE fa.id = :id")
+    Single<FixedAssetDetails> getById(int id);
 }

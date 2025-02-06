@@ -3,6 +3,7 @@ package com.example.mr_proj.fragments.main;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +35,9 @@ import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.dao.FixedAssetDAO;
 import com.example.mr_proj.dao.LocationDAO;
+import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.DetailsDialog;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
@@ -42,7 +46,6 @@ import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
 import com.example.mr_proj.service.DAOService;
-import com.example.mr_proj.util.Converters;
 import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,20 +55,25 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.io.File;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     implements AddEntityDialog.DialogListener,
         AddEntityDialog.FixedAssetsButtonsListener,
-        RemoveEntityDialog.RemoveDialogListener {
+        RemoveEntityDialog.RemoveDialogListener,
+        AddEntityDialog.MapReadyListener{
     private static final String ALBUM_NAME = "fixed_assets";
 
     //dao
+    private FixedAssetDAO fixedAssetDAO;
     private EmployeeDAO employeeDAO;
     private LocationDAO locationDAO;
 
     private final AddEntityDialog dialog = new AddEntityDialog();
+    private ProgressBar loadingSpinner;
 
     //activity result
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
@@ -83,7 +91,7 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         AppDatabase db = DatabaseUtil.getDbInstance(requireContext());
         employeeDAO = db.employeeDAO();
         locationDAO = db.locationDAO();
-        FixedAssetDAO fixedAssetDAO = db.fixedAssetDAO();
+        fixedAssetDAO = db.fixedAssetDAO();
 
         listAdapter = new ListAdapter<>(fixedAssetDAO, this);
         listAdapter.setRowClickListener(this::onItemSelect);
@@ -93,6 +101,8 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         RecyclerView fixedAssetsRecyclerView = root.findViewById(R.id.fixed_assets_list);
         fixedAssetsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fixedAssetsRecyclerView.setAdapter(listAdapter);
+
+        loadingSpinner = root.findViewById(R.id.fa_loading);
 
         barcodeLauncher = registerForActivityResult(new ScanContract(), this::setBarcodeField);
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::setMedia);
@@ -255,6 +265,7 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
             FloatingActionButton cancelFAB = currentDialog.findViewById(R.id.cancel_image);
             cancelFAB.setVisibility(View.VISIBLE);
 
+            requireActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Glide
                     .with(requireContext())
                     .load(uri)
@@ -285,9 +296,22 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         return addDialog != null ? addDialog : editDialog;
     }
 
+    @Override
+    public void onMapReady() {
+        loadingSpinner.setVisibility(View.GONE);
+    }
 
     private void onItemSelect(FixedAsset fixedAsset) { //display fixed asset details
-        //Toast.makeText(getContext(), Converters.formatDate(fixedAsset.creationDate), Toast.LENGTH_SHORT).show();
+        loadingSpinner.setVisibility(View.VISIBLE);
+
+        Disposable d = fixedAssetDAO.getById(fixedAsset.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(faDetails -> {
+                    DetailsDialog<FixedAssetDetails> detailsDialog = new DetailsDialog<>(faDetails);
+                    detailsDialog.show(getChildFragmentManager(), "fixedAssetDetails");
+                });
+        disposables.add(d);
     }
 
     public EmployeeDAO getEmployeeDAO() {
