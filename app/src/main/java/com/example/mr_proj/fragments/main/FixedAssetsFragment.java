@@ -36,6 +36,8 @@ import com.example.mr_proj.dao.EmployeeDAO;
 import com.example.mr_proj.dao.FixedAssetDAO;
 import com.example.mr_proj.dao.LocationDAO;
 import com.example.mr_proj.dto.FixedAssetDetails;
+import com.example.mr_proj.exception.EmptyFieldException;
+import com.example.mr_proj.exception.FieldNotUniqueException;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
 import com.example.mr_proj.fragments.dialog.DetailsDialog;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
@@ -125,14 +127,19 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
     @Override
     public void onAddPositiveClick(DialogFragment dialog) {
-        FixedAsset newAsset = extractFromFields(dialog);
-        if (newAsset == null) {
+        try {
+            FixedAsset newAsset = extractFromFields(dialog);
+            newAsset.creationDate = System.currentTimeMillis();
+            Disposable d = DAOService.insertEntity(newAsset, listAdapter);
+            disposables.add(d);
+        } catch (NumberFormatException | EmptyFieldException e) {
             Toast.makeText(getContext(), R.string.form_notice, Toast.LENGTH_SHORT).show();
             return;
+        } catch (FieldNotUniqueException e) {
+            Toast.makeText(getContext(), R.string.barcode_not_unique, Toast.LENGTH_SHORT).show();
+            return;
         }
-        newAsset.creationDate = System.currentTimeMillis();
-        Disposable d = DAOService.insertEntity(newAsset, listAdapter);
-        disposables.add(d);
+
 
         dialog.dismiss();
     }
@@ -141,30 +148,40 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     public void onEditPositiveClick(DialogFragment dialog) {
         EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
         FixedAsset oldFixedAsset = (FixedAsset) editDialog.getEntity();
-        FixedAsset newFixedAsset = extractFromFields(dialog);
-        if (newFixedAsset == null) {
+        try {
+            FixedAsset newFixedAsset = extractFromFields(dialog);
+
+            newFixedAsset.id = oldFixedAsset.id;
+            newFixedAsset.creationDate = oldFixedAsset.creationDate;
+            Disposable d = DAOService.updateEntity(newFixedAsset, listAdapter);
+            disposables.add(d);
+        } catch (NumberFormatException | EmptyFieldException e) {
             Toast.makeText(getContext(), R.string.form_notice, Toast.LENGTH_SHORT).show();
+            return;
+        } catch (FieldNotUniqueException e) {
+            Toast.makeText(getContext(), R.string.barcode_not_unique, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        newFixedAsset.id = oldFixedAsset.id;
-        newFixedAsset.creationDate = oldFixedAsset.creationDate;
-        Disposable d = DAOService.updateEntity(newFixedAsset, listAdapter);
-        disposables.add(d);
         dialog.dismiss();
     }
 
-    private FixedAsset extractFromFields(DialogFragment dialog) {
+    private FixedAsset extractFromFields(DialogFragment dialog) throws RuntimeException{
         String name = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_name);
+        if (name == null || name.trim().isEmpty()) {
+            throw new EmptyFieldException();
+        }
         String desc = DialogUtil.getFieldValue(dialog, R.id.fixed_asset_desc);
-        int barCode;
+        long barCode;
         double price;
         try {
-            barCode = Integer.parseInt(DialogUtil.getFieldValue(dialog, R.id.bar_code));
+            barCode = Long.parseLong(DialogUtil.getFieldValue(dialog, R.id.bar_code));
             price = Double.parseDouble(DialogUtil.getFieldValue(dialog, R.id.price));
-        } catch (RuntimeException e) {
-            return null;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException();
         }
+        if (!isBarcodeUnique(barCode))
+            throw new FieldNotUniqueException();
 
         Location location = (Location)DialogUtil.getObjectFromSpinner(dialog, R.id.locations_spinner);
         Employee employee = (Employee) DialogUtil.getObjectFromSpinner(dialog, R.id.employees_spinner);
@@ -176,6 +193,14 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         int employeeId = (employee == null) ? 0 : employee.id;
 
         return new FixedAsset(name, desc, barCode, price, image, locationId, employeeId);
+    }
+
+    private boolean isBarcodeUnique(long barcode) {
+        for (FixedAsset fa : listAdapter.getEntities()) {
+            if (fa.barCode == barcode)
+                return false;
+        }
+        return true;
     }
 
     @Override
@@ -264,8 +289,9 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
 
             FloatingActionButton cancelFAB = currentDialog.findViewById(R.id.cancel_image);
             cancelFAB.setVisibility(View.VISIBLE);
-
-            requireActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (!"com.example.mr_proj.fileprovider".equals(uri.getAuthority())) {
+                requireActivity().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
             Glide
                     .with(requireContext())
                     .load(uri)

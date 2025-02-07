@@ -9,7 +9,7 @@ public class FixedAsset extends DbEntity{
 
     public String name;
     public String description;
-    public int barCode;
+    public long barCode;
     public double price;
     public Long creationDate;
     public String image;
@@ -24,7 +24,7 @@ public class FixedAsset extends DbEntity{
         super();
     }
 
-    public FixedAsset(String name, String description, int barCode, double price, String image, int locationId, int employeeId) {
+    public FixedAsset(String name, String description, long barCode, double price, String image, int locationId, int employeeId) {
         this.name = name;
         this.description = description;
         this.barCode = barCode;

@@ -36,4 +36,5 @@
     <string name="camera_permission_message">To use this feature, you need to grant the camera permission.</string>
     <string name="creation_date">Creation date</string>
     <string name="employee">Employee</string>
+    <string name="barcode_not_unique">Entered barcode is already present</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="camera_permission_message">Kako bi mogli koristiti ovu mogućnost, dozvolite aplikaciji korištenje kamere.</string>
     <string name="creation_date">Datum dodavanja</string>
     <string name="employee">Zaposleni</string>
+    <string name="barcode_not_unique">Unešeni bar kod već postoji</string>
 </resources>
