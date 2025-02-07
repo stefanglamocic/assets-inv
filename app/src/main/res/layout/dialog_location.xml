@@ -5,13 +5,31 @@
     android:layout_height="match_parent"
     android:padding="@dimen/margin_med">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
+    <ViewSwitcher
+        android:id="@+id/switcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/location_details_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/location_assets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/margin_med"
+                android:textSize="18sp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ViewSwitcher>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

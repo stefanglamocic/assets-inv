@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.dto.FixedAssetDetails;
+import com.example.mr_proj.fragments.main.LocationsFragment;
 import com.example.mr_proj.model.Location;
 import com.example.mr_proj.util.Converters;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DetailsDialog<T> extends DialogFragment
@@ -31,8 +35,12 @@ public class DetailsDialog<T> extends DialogFragment
 
     private final T entity;
 
+    private TextView dialogTitleText;
+    private ImageButton backButton;
+
     private AddEntityDialog.MapReadyListener mapReadyListener;
     private MapView mapView;
+    private ViewSwitcher switcher;
 
     public DetailsDialog(T entity) {
         this.entity = entity;
@@ -44,8 +52,15 @@ public class DetailsDialog<T> extends DialogFragment
         String titleText = getString(R.string.details);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
+        View dialogTitle = inflater.inflate(R.layout.header_dialog, null);
+        backButton = dialogTitle.findViewById(R.id.dialog_back_btn);
+        dialogTitleText = dialogTitle.findViewById(R.id.dialog_title);
+        dialogTitleText.setText(titleText);
+
         View dialogView = inflater.inflate(R.layout.dialog_location, null);
         if (entity instanceof Location) {
+            switcher = dialogView.findViewById(R.id.switcher);
+            backButton.setOnClickListener(this::onBack);
             initMapView(savedInstanceState, dialogView, R.id.map);
         }
         else if (entity instanceof FixedAssetDetails) {
@@ -57,7 +72,7 @@ public class DetailsDialog<T> extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
                 .setView(dialogView)
-                .setTitle(titleText)
+                .setCustomTitle(dialogTitle)
                 .setNeutralButton(R.string.ok, (dialog, which) -> dismiss())
                 .create();
     }
@@ -123,6 +138,26 @@ public class DetailsDialog<T> extends DialogFragment
         googleMap.addMarker(new MarkerOptions()
                 .position(coors));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coors, 8f));
+
+        if (getParentFragment() instanceof LocationsFragment) {
+            googleMap.setOnMarkerClickListener(this::onMarkerClick);
+        }
+    }
+
+    private boolean onMarkerClick(Marker marker) {
+        switcher.showNext();
+        String titleText = getString(R.string.assets_list);
+        dialogTitleText.setText(titleText);
+        backButton.setVisibility(View.VISIBLE);
+
+        return true;
+    }
+
+    private void onBack(View view) {
+        String titleText = getString(R.string.details);
+        switcher.showPrevious();
+        backButton.setVisibility(View.GONE);
+        dialogTitleText.setText(titleText);
     }
 
     @Override

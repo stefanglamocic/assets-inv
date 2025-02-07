@@ -37,4 +37,5 @@
     <string name="creation_date">Creation date</string>
     <string name="employee">Employee</string>
     <string name="barcode_not_unique">Entered barcode is already present</string>
+    <string name="assets_list">List of appointed assets</string>
 </resources>
