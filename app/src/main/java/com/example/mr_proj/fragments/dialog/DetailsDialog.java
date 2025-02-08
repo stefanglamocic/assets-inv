@@ -2,12 +2,14 @@ package com.example.mr_proj.fragments.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -17,10 +19,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
+import com.example.mr_proj.dao.FixedAssetDAO;
 import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.fragments.main.LocationsFragment;
 import com.example.mr_proj.model.Location;
 import com.example.mr_proj.util.Converters;
+import com.example.mr_proj.util.DatabaseUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -28,6 +32,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DetailsDialog<T> extends DialogFragment
         implements OnMapReadyCallback {
@@ -37,10 +46,14 @@ public class DetailsDialog<T> extends DialogFragment
 
     private TextView dialogTitleText;
     private ImageButton backButton;
+    private ProgressBar detailsSpinner;
+    private TextView detailsText;
 
     private AddEntityDialog.MapReadyListener mapReadyListener;
     private MapView mapView;
     private ViewSwitcher switcher;
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public DetailsDialog(T entity) {
         this.entity = entity;
@@ -60,6 +73,8 @@ public class DetailsDialog<T> extends DialogFragment
         View dialogView = inflater.inflate(R.layout.dialog_location, null);
         if (entity instanceof Location) {
             switcher = dialogView.findViewById(R.id.switcher);
+            detailsSpinner = dialogView.findViewById(R.id.details_loading);
+            detailsText = dialogView.findViewById(R.id.location_assets);
             backButton.setOnClickListener(this::onBack);
             initMapView(savedInstanceState, dialogView, R.id.map);
         }
@@ -149,6 +164,25 @@ public class DetailsDialog<T> extends DialogFragment
         String titleText = getString(R.string.assets_list);
         dialogTitleText.setText(titleText);
         backButton.setVisibility(View.VISIBLE);
+        FixedAssetDAO dao = DatabaseUtil.getDbInstance(requireContext()).fixedAssetDAO();
+        Location location = (Location) entity;
+
+        Disposable d = dao
+                .getByLocation(location.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    detailsSpinner.setVisibility(View.GONE);
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < list.size(); i++) {
+                        builder.append(i + 1)
+                                .append(". ")
+                                .append(list.get(i).getRowText())
+                                .append(System.lineSeparator());
+                    }
+                    detailsText.setText(builder.toString());
+                });
+        disposables.add(d);
 
         return true;
     }
@@ -171,5 +205,17 @@ public class DetailsDialog<T> extends DialogFragment
         }
 
         mapView.onSaveInstanceState(mapViewBundle);
+    }
+
+    @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
+        disposables.clear();
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        disposables.clear();
     }
 }

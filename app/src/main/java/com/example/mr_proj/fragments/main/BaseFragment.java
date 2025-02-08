@@ -33,5 +33,6 @@ public abstract class BaseFragment<T extends DbEntity> extends Fragment
         super.onDestroy();
     }
 
+    public ListAdapter<T> getListAdapter() { return listAdapter; }
 
 }
