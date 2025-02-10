@@ -20,6 +20,15 @@ public class FixedAsset extends DbEntity{
     @ColumnInfo(name = "employee_id")
     public int employeeId;
 
+    @ColumnInfo(name = "asset_register_id")
+    public Integer assetRegisterId;
+
+    @ColumnInfo(name = "obligated_employee_id")
+    public Integer obligatedEmployeeId;
+
+    @ColumnInfo(name = "new_location_id")
+    public Integer newLocationId;
+
     public FixedAsset() {
         super();
     }

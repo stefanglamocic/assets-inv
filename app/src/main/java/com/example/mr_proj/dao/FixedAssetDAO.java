@@ -47,4 +47,11 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
     @Query("SELECT * FROM fixed_asset " +
             "WHERE fixed_asset.location_id = :id")
     Single<List<FixedAsset>> getByLocation(int id);
+
+    @Transaction
+    @Query("SELECT * FROM fixed_asset AS fa " +
+            "LEFT JOIN location AS l ON fa.location_id = l.id " +
+            "LEFT JOIN employee AS e ON fa.employee_id = e.id " +
+            "WHERE fa.barCode = :barcode")
+    Single<FixedAssetDetails> getByBarcode(long barcode);
 }
