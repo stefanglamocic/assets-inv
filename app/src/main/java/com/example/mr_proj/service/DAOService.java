@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.mr_proj.adapter.DropdownListAdapter;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.model.DbEntity;
@@ -30,7 +31,8 @@ public class DAOService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
-                    ArrayAdapter<T> adapter = new ArrayAdapter<>(
+                    list.add(0, null);
+                    ArrayAdapter<T> adapter = new DropdownListAdapter<>(
                             spinner.getContext(),
                             android.R.layout.simple_spinner_item,
                             list

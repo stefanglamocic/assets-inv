@@ -2,8 +2,42 @@ package com.example.mr_proj.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 
-@Entity(tableName = "fixed_asset")
+@Entity(
+        tableName = "fixed_asset",
+        foreignKeys = {
+                @ForeignKey(
+                        entity = Location.class,
+                        parentColumns = "id",
+                        childColumns = "location_id",
+                        onDelete = ForeignKey.SET_NULL
+                ),
+                @ForeignKey(
+                        entity = Employee.class,
+                        parentColumns = "id",
+                        childColumns = "employee_id",
+                        onDelete = ForeignKey.SET_NULL
+                ),
+                @ForeignKey(
+                        entity = AssetRegister.class,
+                        parentColumns = "id",
+                        childColumns = "asset_register_id",
+                        onDelete = ForeignKey.SET_NULL
+                ),
+                @ForeignKey(
+                        entity = Employee.class,
+                        parentColumns = "id",
+                        childColumns = "obligated_employee_id",
+                        onDelete = ForeignKey.SET_NULL
+                ),
+                @ForeignKey(
+                        entity = Location.class,
+                        parentColumns = "id",
+                        childColumns = "new_location_id",
+                        onDelete = ForeignKey.SET_NULL
+                )
+        })
 public class FixedAsset extends DbEntity{
     private static final String DEFAULT_IMG = "ic_object";
 
@@ -15,10 +49,10 @@ public class FixedAsset extends DbEntity{
     public String image;
 
     @ColumnInfo(name = "location_id")
-    public int locationId;
+    public Integer locationId;
 
     @ColumnInfo(name = "employee_id")
-    public int employeeId;
+    public Integer employeeId;
 
     @ColumnInfo(name = "asset_register_id")
     public Integer assetRegisterId;
@@ -33,7 +67,7 @@ public class FixedAsset extends DbEntity{
         super();
     }
 
-    public FixedAsset(String name, String description, long barCode, double price, String image, int locationId, int employeeId) {
+    public FixedAsset(String name, String description, long barCode, double price, String image, Integer locationId, Integer employeeId) {
         this.name = name;
         this.description = description;
         this.barCode = barCode;

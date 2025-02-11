@@ -16,7 +16,7 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
-//ako treba vratiti DTO
+//if I need to return a DTO
 //https://developer.android.com/training/data-storage/room/accessing-data#return-subset
 
 @Dao

@@ -32,4 +32,8 @@
         <item name="android:tint">@color/cool_grey</item>
     </style>
 
+    <style name="SecondaryButton">
+        <item name="android:drawableTint">@color/white</item>
+    </style>
+
 </resources>

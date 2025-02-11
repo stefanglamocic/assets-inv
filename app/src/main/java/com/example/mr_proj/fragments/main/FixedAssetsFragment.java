@@ -148,6 +148,7 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
     public void onEditPositiveClick(DialogFragment dialog) {
         EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
         FixedAsset oldFixedAsset = (FixedAsset) editDialog.getEntity();
+        oldFixedAsset.barCode = -1; //setting the barcode to -1 so it doesn't raise FieldNotUniqueException for existing item
         try {
             FixedAsset newFixedAsset = extractFromFields(dialog);
 
@@ -180,6 +181,8 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         } catch (NumberFormatException e) {
             throw new NumberFormatException();
         }
+        if (barCode < 0)
+            throw new NumberFormatException();
         if (!isBarcodeUnique(barCode))
             throw new FieldNotUniqueException();
 
@@ -189,8 +192,8 @@ public class FixedAssetsFragment extends BaseFragment<FixedAsset>
         if (getString(R.string.no_image).equals(image)) //if the image is not selected in the dialog form
             image = null;
 
-        int locationId = (location == null) ? 0 : location.id;
-        int employeeId = (employee == null) ? 0 : employee.id;
+        Integer locationId = (location == null) ? null : location.id;
+        Integer employeeId = (employee == null) ? null : employee.id;
 
         return new FixedAsset(name, desc, barCode, price, image, locationId, employeeId);
     }

@@ -101,9 +101,14 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
         setSpinnerItem(faEmployee, fixedAsset.employeeId);
     }
 
-    private void setSpinnerItem(Spinner spinner, int id) {
+    private void setSpinnerItem(Spinner spinner, Integer id) {
         SpinnerAdapter adapter = spinner.getAdapter();
-        for (int i = 0; i < adapter.getCount(); i++) {
+        if (id == null) {
+            spinner.setSelection(0);
+            return;
+        }
+
+        for (int i = 1; i < adapter.getCount(); i++) {
             DbEntity item = (DbEntity) adapter.getItem(i);
             if (item.id == id)
                 spinner.setSelection(i);

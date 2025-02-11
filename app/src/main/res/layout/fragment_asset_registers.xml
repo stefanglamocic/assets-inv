@@ -5,11 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".fragments.main.AssetRegistersFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/asset_registers_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_asset_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/asset_registers"
-        android:layout_gravity="center"/>
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/add"/>
 
 </FrameLayout>

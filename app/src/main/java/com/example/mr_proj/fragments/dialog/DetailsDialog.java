@@ -106,7 +106,8 @@ public class DetailsDialog<T> extends DialogFragment
         TextView fadBarcode = dialogView.findViewById(R.id.fad_barcode);
         fadBarcode.setText(String.valueOf(fad.fixedAsset.barCode));
         TextView fadEmployee = dialogView.findViewById(R.id.fad_employee);
-        fadEmployee.setText(fad.employee.getRowText());
+        if (fad.employee != null)
+            fadEmployee.setText(fad.employee.getRowText());
 
         ImageView fadImage = dialogView.findViewById(R.id.fad_image);
         if (fad.fixedAsset.image != null) {
@@ -122,11 +123,17 @@ public class DetailsDialog<T> extends DialogFragment
 
     private void initMapView(Bundle savedInstanceState, View dialogView, int viewId) {
         mapReadyListener = (AddEntityDialog.MapReadyListener) getParentFragment();
+        mapView = dialogView.findViewById(viewId);
+        if (entity instanceof FixedAssetDetails
+                && ((FixedAssetDetails) entity).location == null) {
+            mapView.setVisibility(View.GONE);
+            mapReadyListener.onMapReady();
+            return;
+        }
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
-        mapView = dialogView.findViewById(viewId);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
     }

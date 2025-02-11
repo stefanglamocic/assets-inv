@@ -37,4 +37,6 @@
     <string name="employee">Zaposleni</string>
     <string name="barcode_not_unique">Unešeni bar kod već postoji</string>
     <string name="assets_list">Lista pripadajućih sredstava</string>
+    <string name="add_item">Dodaj stavku</string>
+    <string name="choose_option">Odaberite selekciju</string>
 </resources>

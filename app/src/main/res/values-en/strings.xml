@@ -38,4 +38,6 @@
     <string name="employee">Employee</string>
     <string name="barcode_not_unique">Entered barcode is already present</string>
     <string name="assets_list">List of appointed assets</string>
+    <string name="add_item">Add item</string>
+    <string name="choose_option">Choose an option</string>
 </resources>
