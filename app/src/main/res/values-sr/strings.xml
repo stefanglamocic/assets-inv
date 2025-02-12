@@ -40,4 +40,7 @@
     <string name="assets_list">Lista pripadajućih sredstava</string>
     <string name="add_item">Dodaj stavku</string>
     <string name="choose_option">Odaberite selekciju</string>
+    <string name="obligated_employee">Zaduženi zaposleni</string>
+    <string name="new_location">Nova lokacija</string>
+    <string name="fixed_asset">Osnovno sredstvo</string>
 </resources>

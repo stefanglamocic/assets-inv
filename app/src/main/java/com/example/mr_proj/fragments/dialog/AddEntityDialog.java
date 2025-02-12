@@ -6,8 +6,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -17,12 +20,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mr_proj.R;
+import com.example.mr_proj.adapter.AssetRegisterItemsAdapter;
+import com.example.mr_proj.dto.FixedAssetDetails;
+import com.example.mr_proj.fragments.main.AssetRegistersFragment;
 import com.example.mr_proj.fragments.main.EmployeesFragment;
 import com.example.mr_proj.fragments.main.FixedAssetsFragment;
 import com.example.mr_proj.fragments.main.LocationsFragment;
+import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.service.DAOService;
+import com.example.mr_proj.util.DatabaseUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -30,6 +40,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -47,6 +60,9 @@ public class AddEntityDialog extends DialogFragment
     private MapView mapView;
     protected GoogleMap map;
     protected LatLng currentPosition = new LatLng(44.772182, 17.191000);
+
+    //asset register
+    private AssetRegisterItemsAdapter registerItemsAdapter;
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -82,6 +98,10 @@ public class AddEntityDialog extends DialogFragment
         }
         else if (parentFragment instanceof EmployeesFragment) {
             dialogView = inflater.inflate(R.layout.dialog_employee_form, null);
+        }
+        else if (parentFragment instanceof AssetRegistersFragment) {
+            dialogView = inflater.inflate(R.layout.dialog_asset_register_form, null);
+            initAssetsRegisterDialog(dialogView);
         }
         else if (parentFragment instanceof LocationsFragment) {
             try {
@@ -156,12 +176,35 @@ public class AddEntityDialog extends DialogFragment
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         compositeDisposable.clear();
+        if (registerItemsAdapter != null)
+            registerItemsAdapter.getDisposables().clear();
     }
 
     @Override
     public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         compositeDisposable.clear();
+        if (registerItemsAdapter != null)
+            registerItemsAdapter.getDisposables().clear();
+    }
+
+    private void initAssetsRegisterDialog(View dialogView) {
+        List<FixedAssetDetails> fixedAssets = new ArrayList<>();
+        AppDatabase db = DatabaseUtil.getDbInstance(getContext());
+        registerItemsAdapter = new AssetRegisterItemsAdapter(db, fixedAssets);
+
+        RecyclerView assetItemsView = dialogView.findViewById(R.id.fixed_assets_container);
+        assetItemsView.setLayoutManager(new LinearLayoutManager(getContext()));
+        assetItemsView.setAdapter(registerItemsAdapter);
+
+        Button addAssetItemBtn = dialogView.findViewById(R.id.add_fixed_asset);
+        addAssetItemBtn.setOnClickListener(this::addFixedAssetItem);
+    }
+
+    private void addFixedAssetItem(View view) {
+        List<FixedAssetDetails> fixedAssets = registerItemsAdapter.getFixedAssets();
+        fixedAssets.add(new FixedAssetDetails());
+        registerItemsAdapter.notifyItemInserted(fixedAssets.size() - 1);
     }
 
     private void initFixedAssetsDialog(View dialogView, Fragment parentFragment) {

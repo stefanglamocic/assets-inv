@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/row_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_med">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/ari_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/fixed_asset"
+                />
+
+            <ImageButton
+                android:id="@+id/ari_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_barcode_scanner"
+                android:theme="@style/ImageButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ari_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                android:layout_marginTop="@dimen/padding_small"/>
+
+            <Spinner
+                android:id="@+id/ari_spinner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toEndOf="@id/ari_scan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ari_scan"
+                app:layout_constraintBottom_toBottomOf="@id/ari_scan"
+                android:layout_marginStart="@dimen/padding_small"/>
+
+            <TextView
+                android:id="@+id/fa_employee_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/fa_employee_spinner"
+                app:layout_constraintTop_toBottomOf="@id/ari_spinner"
+                app:layout_constraintEnd_toEndOf="@id/fa_employee_spinner"
+                android:text="@string/obligated_employee"
+                android:layout_marginTop="@dimen/margin_med"/>
+
+            <Spinner
+                android:id="@+id/fa_employee_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fa_employee_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/padding_small"
+                android:layout_marginEnd="@dimen/padding_small"/>
+
+            <TextView
+                android:id="@+id/fa_location_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/fa_location_spinner"
+                app:layout_constraintTop_toBottomOf="@id/fa_employee_spinner"
+                app:layout_constraintEnd_toEndOf="@id/fa_location_spinner"
+                android:text="@string/new_location"
+                android:layout_marginTop="@dimen/margin_med"/>
+
+            <Spinner
+                android:id="@+id/fa_location_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fa_location_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/padding_small"
+                android:layout_marginStart="@dimen/padding_small"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageButton
+            android:id="@+id/ari_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_remove"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/padding_small"
+            android:theme="@style/SecondaryTransparentButton"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

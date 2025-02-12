@@ -3,6 +3,7 @@ package com.example.mr_proj.util;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
@@ -30,5 +31,19 @@ public class DialogUtil {
 
         Spinner spinner = dialog.getDialog().findViewById(fieldId);
         return spinner.getSelectedItem();
+    }
+
+    public static void setSpinnerItem(Spinner spinner, Integer id) {
+        SpinnerAdapter adapter = spinner.getAdapter();
+        if (id == null) {
+            spinner.setSelection(0);
+            return;
+        }
+
+        for (int i = 1; i < adapter.getCount(); i++) {
+            DbEntity item = (DbEntity) adapter.getItem(i);
+            if (item.id == id)
+                spinner.setSelection(i);
+        }
     }
 }

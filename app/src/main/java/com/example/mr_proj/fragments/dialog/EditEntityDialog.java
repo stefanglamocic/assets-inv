@@ -20,6 +20,7 @@ import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
+import com.example.mr_proj.util.DialogUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -96,23 +97,9 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
         }
         //spinners
         Spinner faLocation = dialog.findViewById(R.id.locations_spinner);
-        setSpinnerItem(faLocation, fixedAsset.locationId);
+        DialogUtil.setSpinnerItem(faLocation, fixedAsset.locationId);
         Spinner faEmployee = dialog.findViewById(R.id.employees_spinner);
-        setSpinnerItem(faEmployee, fixedAsset.employeeId);
-    }
-
-    private void setSpinnerItem(Spinner spinner, Integer id) {
-        SpinnerAdapter adapter = spinner.getAdapter();
-        if (id == null) {
-            spinner.setSelection(0);
-            return;
-        }
-
-        for (int i = 1; i < adapter.getCount(); i++) {
-            DbEntity item = (DbEntity) adapter.getItem(i);
-            if (item.id == id)
-                spinner.setSelection(i);
-        }
+        DialogUtil.setSpinnerItem(faEmployee, fixedAsset.employeeId);
     }
 
     private void setEmployeeControls(AlertDialog dialog) {

@@ -36,4 +36,9 @@
         <item name="android:drawableTint">@color/white</item>
     </style>
 
+    <style name="SecondaryTransparentButton">
+        <item name="android:tint">@color/orange_600</item>
+        <item name="android:backgroundTint">@color/zxing_transparent</item>
+    </style>
+
 </resources>

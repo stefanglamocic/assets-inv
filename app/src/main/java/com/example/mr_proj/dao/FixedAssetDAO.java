@@ -54,4 +54,10 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
             "LEFT JOIN employee AS e ON fa.employee_id = e.id " +
             "WHERE fa.barCode = :barcode")
     Single<FixedAssetDetails> getByBarcode(long barcode);
+
+    @Transaction
+    @Query("SELECT * FROM fixed_asset AS fa " +
+            "LEFT JOIN asset_register AS ar ON fa.asset_register_id = ar.id " +
+            "WHERE fa.asset_register_id IS NULL")
+    Single<List<FixedAsset>> getAllUnregistered();
 }

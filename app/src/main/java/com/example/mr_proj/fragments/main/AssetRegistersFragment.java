@@ -3,7 +3,6 @@ package com.example.mr_proj.fragments.main;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,6 +52,7 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
     }
 
     private void onOpenAddDialog(View view) {
+        addDialog.show(getChildFragmentManager(), "addAssetRegister");
     }
 
     private void onItemClick(AssetRegister assetRegister) {
