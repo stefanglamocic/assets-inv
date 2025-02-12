@@ -1,5 +1,6 @@
 package com.example.mr_proj.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.mr_proj.util.DialogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -58,6 +60,14 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
         holder.removeButton.setOnClickListener(v -> removeItem(position));
     }
 
+    private FixedAsset findAssetByBarcode(List<FixedAsset> list, long barcode) {
+        for (FixedAsset fa : list) {
+            if (fa.barCode == barcode)
+                return fa;
+        }
+        return null;
+    }
+
     private void initSpinners(ItemHolder holder, int position) {
         FixedAssetDetails fixedAsset = fixedAssets.get(position);
 
@@ -67,12 +77,11 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
-                    List<FixedAsset> filteredList = filterFixedAssetSpinnerList(list);
-                    filteredList.add(0, null);
+                    list.add(0, null);
                     ArrayAdapter<FixedAsset> adapter = new DropdownListAdapter<>(
                             holder.fixedAssetSpinner.getContext(),
                             android.R.layout.simple_spinner_item,
-                            filteredList
+                            list
                     );
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     holder.fixedAssetSpinner.setAdapter(adapter);
@@ -91,18 +100,6 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
             DialogUtil.setSpinnerItem(holder.newLocationSpinner, null);
 
         disposables.addAll(employeeD, locationD, fixedAssetsD);
-    }
-
-    private List<FixedAsset> filterFixedAssetSpinnerList(List<FixedAsset> spinnerList) {
-        List<FixedAsset> currentList = fixedAssets
-                .stream()
-                .map(e -> e.fixedAsset)
-                .collect(Collectors.toList());
-
-        return spinnerList
-                .stream()
-                .filter(e -> !currentList.contains(e))
-                .collect(Collectors.toList());
     }
 
     @Override
