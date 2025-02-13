@@ -20,6 +20,7 @@ import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.exception.EmptyFieldException;
 import com.example.mr_proj.exception.FieldNotUniqueException;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.model.AssetRegister;
@@ -123,7 +124,28 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
 
     @Override
     public void onEditPositiveClick(DialogFragment dialog) {
+        EditEntityDialog<? extends DbEntity> editDialog = (EditEntityDialog<? extends DbEntity>) dialog;
+        try {
+            String name = getAssetRegisterName(dialog);
+            List<FixedAssetDetails> registerItems = getAssetRegisterItems(dialog);
 
+            AssetRegisterDTO assetRegister = new AssetRegisterDTO(name, registerItems);
+            assetRegister.assetRegister.id = editDialog.getEntityId();
+            List<FixedAssetDetails> unwanted = editDialog.getRegisterItemsAdapter().getUnwanted();
+
+            //update assetRegister
+            //update unwanted
+
+        } catch (EmptyFieldException e) {
+            Toast.makeText(getContext(), R.string.fields_empty, Toast.LENGTH_LONG).show();
+            return;
+        }
+        catch (FieldNotUniqueException e) {
+            Toast.makeText(getContext(), R.string.item_present, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        dialog.dismiss();
     }
 
     @Override

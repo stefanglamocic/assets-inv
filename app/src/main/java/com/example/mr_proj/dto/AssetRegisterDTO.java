@@ -5,6 +5,7 @@ import androidx.room.Embedded;
 import androidx.room.Relation;
 
 import com.example.mr_proj.model.AssetRegister;
+import com.example.mr_proj.model.FixedAsset;
 
 import java.util.List;
 
@@ -13,7 +14,8 @@ public class AssetRegisterDTO {
     public AssetRegister assetRegister;
     @Relation(
             parentColumn = "id",
-            entityColumn = "asset_register_id"
+            entityColumn = "asset_register_id",
+            entity = FixedAsset.class
     )
     public List<FixedAssetDetails> assetList;
 

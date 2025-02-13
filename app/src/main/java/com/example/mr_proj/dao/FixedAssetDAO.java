@@ -34,6 +34,12 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
             "WHERE id IN (:fixedAssetIds)")
     Completable update(List<Integer> fixedAssetIds, int registerId);
 
+    @Query("UPDATE fixed_asset SET asset_register_id = :assetRegisterId, " +
+            "obligated_employee_id = :employeeId, " +
+            "new_location_id = :locationId " +
+            "WHERE id = :fixedAssetId")
+    Completable update(int fixedAssetId, Integer assetRegisterId, Integer employeeId, Integer locationId);
+
     @Delete
     Completable delete(FixedAsset asset);
 

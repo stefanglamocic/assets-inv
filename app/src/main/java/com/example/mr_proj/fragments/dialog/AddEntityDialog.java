@@ -66,7 +66,7 @@ public class AddEntityDialog extends DialogFragment
     protected LatLng currentPosition = new LatLng(44.772182, 17.191000);
 
     //asset register
-    private AssetRegisterItemsAdapter registerItemsAdapter;
+    protected AssetRegisterItemsAdapter registerItemsAdapter;
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -192,11 +192,15 @@ public class AddEntityDialog extends DialogFragment
             registerItemsAdapter.getDisposables().clear();
     }
 
-    private void initAssetsRegisterDialog(View dialogView) {
+    protected void initRegisterItemsAdapter() {
         ActivityResultLauncher<ScanOptions> barcodeScannerLauncher =
                 registerForActivityResult(new ScanContract(), this::barcodeScanned);
         AppDatabase db = DatabaseUtil.getDbInstance(getContext());
         registerItemsAdapter = new AssetRegisterItemsAdapter(db, barcodeScannerLauncher);
+    }
+
+    private void initAssetsRegisterDialog(View dialogView) {
+        initRegisterItemsAdapter();
 
         RecyclerView assetItemsView = dialogView.findViewById(R.id.fixed_assets_container);
         assetItemsView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -206,7 +210,7 @@ public class AddEntityDialog extends DialogFragment
         addAssetItemBtn.setOnClickListener(this::addFixedAssetItem);
     }
 
-    private void barcodeScanned(ScanIntentResult scanIntentResult) {
+    protected void barcodeScanned(ScanIntentResult scanIntentResult) {
         if (scanIntentResult == null)
             return;
 

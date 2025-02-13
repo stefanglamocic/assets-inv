@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -34,6 +33,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegisterItemsAdapter.ItemHolder> {
     private final List<FixedAssetDetails> fixedAssets;
+    private final List<FixedAssetDetails> unwanted = new ArrayList<>();
 
     private final AppDatabase db;
 
@@ -195,13 +195,16 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
 
     private void removeItem(int position) {
         if (position >= 0 && position < fixedAssets.size()) {
-            fixedAssets.remove(position);
+            FixedAssetDetails fad = fixedAssets.remove(position);
+            unwanted.add(fad);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, fixedAssets.size());
         }
     }
 
     public List<FixedAssetDetails> getFixedAssets() { return fixedAssets; }
+
+    public List<FixedAssetDetails> getUnwanted() { return unwanted; }
 
     public CompositeDisposable getDisposables() { return disposables; }
 

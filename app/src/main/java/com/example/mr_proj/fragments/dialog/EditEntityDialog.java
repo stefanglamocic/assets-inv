@@ -11,20 +11,28 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
+import com.example.mr_proj.adapter.AssetRegisterItemsAdapter;
+import com.example.mr_proj.dto.AssetRegisterDTO;
+import com.example.mr_proj.model.AppDatabase;
+import com.example.mr_proj.model.AssetRegister;
 import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
+import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     private final T entity;
@@ -60,6 +68,27 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
         else if (entity instanceof FixedAsset) {
             setFixedAssetControls(dialog);
         }
+        else if (entity instanceof AssetRegister) {
+            setAssetRegisterControls(dialog);
+        }
+    }
+
+    @Override
+    protected void initRegisterItemsAdapter() {
+        ActivityResultLauncher<ScanOptions> barcodeScannerLauncher =
+                registerForActivityResult(new ScanContract(), this::barcodeScanned);
+        AppDatabase db = DatabaseUtil.getDbInstance(getContext());
+        AssetRegisterDTO assetRegisterDTO = new AssetRegisterDTO();
+        assetRegisterDTO.assetRegister = (AssetRegister) entity;
+        //get fixed asset list
+        registerItemsAdapter = new AssetRegisterItemsAdapter(db, assetRegisterDTO.assetList, barcodeScannerLauncher);
+    }
+
+    private void setAssetRegisterControls(AlertDialog dialog) {
+        AssetRegister assetRegister = (AssetRegister) entity;
+
+        EditText arName = dialog.findViewById(R.id.asset_register_name);
+        arName.setText(assetRegister.name);
     }
 
     private void setFixedAssetControls(AlertDialog dialog) {

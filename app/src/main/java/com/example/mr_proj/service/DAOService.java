@@ -1,6 +1,7 @@
 package com.example.mr_proj.service;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -110,6 +112,19 @@ public class DAOService {
         return searchDisposable;
     }
 
+    public static Completable updateMultipleAssets(AppDatabase db, AssetRegisterDTO dto) {
+        return Completable.mergeArray(dto.assetList
+                .stream()
+                .map(fad -> {
+                    Integer assetRegisterId = fad.assetRegister == null ? null : fad.assetRegister.id;
+                    Integer employeeId = fad.fixedAsset.obligatedEmployeeId;
+                    Integer locationId = fad.fixedAsset.newLocationId;
+                    return db.fixedAssetDAO()
+                            .update(fad.fixedAsset.id, assetRegisterId, employeeId, locationId);
+                }).toArray(Completable[]::new)
+            );
+    }
+
     public static Disposable insertAssetRegister(AppDatabase db,
                                                  ListAdapter<AssetRegister> adapter,
                                                  AssetRegisterDTO dto) {
@@ -119,20 +134,15 @@ public class DAOService {
                 .subscribeOn(Schedulers.io())
                 .flatMapCompletable(id -> {
                     dto.assetRegister.id = id.intValue();
-                    List<Integer> fixedAssetsIds =
-                            dto.assetList
-                                    .stream()
-                                    .map(fad -> fad.fixedAsset.id)
-                                    .collect(Collectors.toList());
-
-                    return db
-                            .fixedAssetDAO()
-                            .update(fixedAssetsIds, id.intValue());
+                    return updateMultipleAssets(db, dto);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     adapter.getEntities().add(dto.assetRegister);
                     adapter.notifyItemInserted(adapter.getItemCount() - 1);
+                },
+                error -> {
+                    Log.d("insertAssetRegister", error.toString());
                 });
     }
 }
