@@ -45,4 +45,5 @@
     <string name="fixed_asset">Fixed asset</string>
     <string name="fields_empty">Enter the data into all fields</string>
     <string name="item_present">Fixed assets must be unique</string>
+    <string name="asset_not_found">Fixed asset not found</string>
 </resources>

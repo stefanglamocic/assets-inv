@@ -14,7 +14,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -39,6 +41,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanIntentResult;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -188,9 +193,10 @@ public class AddEntityDialog extends DialogFragment
     }
 
     private void initAssetsRegisterDialog(View dialogView) {
-        List<FixedAssetDetails> fixedAssets = new ArrayList<>();
+        ActivityResultLauncher<ScanOptions> barcodeScannerLauncher =
+                registerForActivityResult(new ScanContract(), this::barcodeScanned);
         AppDatabase db = DatabaseUtil.getDbInstance(getContext());
-        registerItemsAdapter = new AssetRegisterItemsAdapter(db, fixedAssets);
+        registerItemsAdapter = new AssetRegisterItemsAdapter(db, barcodeScannerLauncher);
 
         RecyclerView assetItemsView = dialogView.findViewById(R.id.fixed_assets_container);
         assetItemsView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -198,6 +204,16 @@ public class AddEntityDialog extends DialogFragment
 
         Button addAssetItemBtn = dialogView.findViewById(R.id.add_fixed_asset);
         addAssetItemBtn.setOnClickListener(this::addFixedAssetItem);
+    }
+
+    private void barcodeScanned(ScanIntentResult scanIntentResult) {
+        if (scanIntentResult == null)
+            return;
+
+        long barcode = Long.parseLong(scanIntentResult.getContents());
+        boolean found = registerItemsAdapter.setAssetByBarcode(barcode);
+        if (!found)
+            Toast.makeText(getContext(), R.string.asset_not_found, Toast.LENGTH_LONG).show();
     }
 
     private void addFixedAssetItem(View view) {

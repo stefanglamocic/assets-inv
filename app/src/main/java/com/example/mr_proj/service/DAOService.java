@@ -27,9 +27,17 @@ public class DAOService {
     }
 
     public static <T extends DbEntity> Disposable populateSpinner(IDAO<T> dao, Spinner spinner) {
+        return populateSpinner(dao, spinner, null);
+    }
+
+    public static <T extends DbEntity> Disposable populateSpinner(IDAO<T> dao, Spinner spinner, Runnable onFinish) {
         return dao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    if (onFinish != null)
+                        onFinish.run();
+                })
                 .subscribe(list -> {
                     list.add(0, null);
                     ArrayAdapter<T> adapter = new DropdownListAdapter<>(

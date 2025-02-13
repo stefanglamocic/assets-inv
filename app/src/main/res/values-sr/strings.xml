@@ -45,4 +45,5 @@
     <string name="fixed_asset">Osnovno sredstvo</string>
     <string name="fields_empty">Popunite sva polja u formi</string>
     <string name="item_present">Osnovna sredstva moraju biti jedinstvena</string>
+    <string name="asset_not_found">Osnovno sredstvo nije pronađeno</string>
 </resources>

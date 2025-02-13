@@ -8,7 +8,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,7 @@ import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
 import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DialogUtil;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +37,21 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
 
     private final AppDatabase db;
 
+    private final ActivityResultLauncher<ScanOptions> barcodeScannerLauncher;
+    private int scannedItemPosition;
+    private List<FixedAsset> spinnerAssets;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    public AssetRegisterItemsAdapter(AppDatabase db, List<FixedAssetDetails> fixedAssets) {
+    public AssetRegisterItemsAdapter(AppDatabase db,
+                                     List<FixedAssetDetails> fixedAssets,
+                                     ActivityResultLauncher<ScanOptions> barcodeScannerLauncher) {
         this.db = db;
         this.fixedAssets = fixedAssets;
+        this.barcodeScannerLauncher = barcodeScannerLauncher;
     }
 
-    public AssetRegisterItemsAdapter(AppDatabase db) {
-        this(db, new ArrayList<>());
+    public AssetRegisterItemsAdapter(AppDatabase db, ActivityResultLauncher<ScanOptions> barcodeScannerLauncher) {
+        this(db, new ArrayList<>(), barcodeScannerLauncher);
     }
 
     @NonNull
@@ -55,15 +64,33 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
 
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
-        FixedAssetDetails fixedAsset = fixedAssets.get(position);
         initSpinners(holder, position);
-        //holder.scanButton set on click event when spinners are initialized
+        holder.scanButton.setOnClickListener(v -> onOpenScanner(v, position));
         holder.removeButton.setOnClickListener(v -> removeItem(position));
     }
 
-    private FixedAsset findAssetByBarcode(List<FixedAsset> list, long barcode) {
-        for (FixedAsset fa : list) {
-            if (fa.barCode == barcode)
+    private void onOpenScanner(View view, int position) {
+        ScanOptions scanOptions = new ScanOptions();
+        String notice = view.getContext().getString(R.string.scan_barcode);
+        scanOptions.setPrompt(notice);
+        scanOptions.setOrientationLocked(false);
+
+        scannedItemPosition = position;
+        barcodeScannerLauncher.launch(scanOptions);
+    }
+
+    public boolean setAssetByBarcode(long barcode) {
+        FixedAssetDetails fad = fixedAssets.get(scannedItemPosition);
+        fad.fixedAsset = findAssetByBarcode(barcode);
+        notifyItemChanged(scannedItemPosition);
+        return fad.fixedAsset != null;
+    }
+
+    private FixedAsset findAssetByBarcode(long barcode) {
+        if (spinnerAssets == null)
+            return null;
+        for (FixedAsset fa : spinnerAssets) {
+            if (fa != null && fa.barCode == barcode)
                 return fa;
         }
         return null;
@@ -77,7 +104,14 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
                 .getAllUnregistered()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    if (fixedAsset.fixedAsset != null)
+                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, fixedAsset.fixedAsset.id);
+                    else
+                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, null);
+                })
                 .subscribe(list -> {
+                    spinnerAssets = list;
                     list.add(0, null);
                     ArrayAdapter<FixedAsset> adapter = new DropdownListAdapter<>(
                             holder.fixedAssetSpinner.getContext(),
@@ -88,17 +122,21 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
                     holder.fixedAssetSpinner.setAdapter(adapter);
                 });
 
-        Disposable employeeD = DAOService.populateSpinner(db.employeeDAO(), holder.obligatedEmployeeSpinner);
-        if (fixedAsset.obligatedEmployee != null)
-            DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, fixedAsset.obligatedEmployee.id);
-        else
-            DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, null);
+        Disposable employeeD = DAOService.populateSpinner(db.employeeDAO(), holder.obligatedEmployeeSpinner,
+                () -> {
+                    if (fixedAsset.obligatedEmployee != null)
+                        DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, fixedAsset.obligatedEmployee.id);
+                    else
+                        DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, null);
+                });
 
-        Disposable locationD = DAOService.populateSpinner(db.locationDAO(), holder.newLocationSpinner);
-        if (fixedAsset.newLocation != null)
-            DialogUtil.setSpinnerItem(holder.newLocationSpinner, fixedAsset.newLocation.id);
-        else
-            DialogUtil.setSpinnerItem(holder.newLocationSpinner, null);
+        Disposable locationD = DAOService.populateSpinner(db.locationDAO(), holder.newLocationSpinner,
+                () -> {
+                    if (fixedAsset.newLocation != null)
+                        DialogUtil.setSpinnerItem(holder.newLocationSpinner, fixedAsset.newLocation.id);
+                    else
+                        DialogUtil.setSpinnerItem(holder.newLocationSpinner, null);
+                });
 
         setSpinnerEvents(holder, position);
 
