@@ -9,16 +9,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.AssetRegisterDAO;
+import com.example.mr_proj.dto.FixedAssetDetails;
+import com.example.mr_proj.exception.EmptyFieldException;
+import com.example.mr_proj.exception.FieldNotUniqueException;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AssetRegister;
+import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
+import com.example.mr_proj.util.DialogUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -37,7 +47,6 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
 
         listAdapter = new ListAdapter<>(assetRegisterDAO, this);
         listAdapter.setRowClickListener(this::onItemClick);
-
         Disposable d = DAOService.getEntities(listAdapter);
         disposables.add(d);
 
@@ -60,7 +69,41 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
 
     @Override
     public void onAddPositiveClick(DialogFragment dialog) {
+        try {
+            String name = getAssetRegisterName(dialog);
+            Set<FixedAssetDetails> registerItems = getAssetRegisterItems(dialog);
+        } catch (EmptyFieldException e) {
+            Toast.makeText(getContext(), R.string.fields_empty, Toast.LENGTH_LONG).show();
+            return;
+        }
+        catch (FieldNotUniqueException e) {
+            Toast.makeText(getContext(), R.string.item_present, Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        dialog.dismiss();
+    }
+
+    private String getAssetRegisterName(DialogFragment dialog) throws RuntimeException{
+        String name = DialogUtil.getFieldValue(dialog, R.id.asset_register_name);
+        if (name == null || name.trim().isEmpty())
+            throw new EmptyFieldException();
+        return name;
+    }
+
+    private Set<FixedAssetDetails> getAssetRegisterItems(DialogFragment dialog) throws RuntimeException{
+        AddEntityDialog addDialog = (AddEntityDialog) dialog;
+        List<FixedAssetDetails> fixedAssetList = addDialog.getRegisterItemsAdapter().getFixedAssets();
+        for (FixedAssetDetails fa : fixedAssetList) {
+            if (fa.fixedAsset == null || fa.obligatedEmployee == null || fa.newLocation == null) {
+                throw new EmptyFieldException();
+            }
+        }
+        Set<FixedAssetDetails> assetRegisterItems = new HashSet<>(fixedAssetList);
+        if (assetRegisterItems.size() != fixedAssetList.size())
+            throw new FieldNotUniqueException();
+
+        return assetRegisterItems;
     }
 
     @Override

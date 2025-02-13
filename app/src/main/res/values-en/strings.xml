@@ -43,4 +43,6 @@
     <string name="obligated_employee">Obligated employee</string>
     <string name="new_location">New location</string>
     <string name="fixed_asset">Fixed asset</string>
+    <string name="fields_empty">Enter the data into all fields</string>
+    <string name="item_present">Fixed assets must be unique</string>
 </resources>

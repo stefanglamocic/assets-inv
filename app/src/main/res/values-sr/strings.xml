@@ -43,4 +43,6 @@
     <string name="obligated_employee">Zaduženi zaposleni</string>
     <string name="new_location">Nova lokacija</string>
     <string name="fixed_asset">Osnovno sredstvo</string>
+    <string name="fields_empty">Popunite sva polja u formi</string>
+    <string name="item_present">Osnovna sredstva moraju biti jedinstvena</string>
 </resources>

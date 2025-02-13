@@ -241,6 +241,10 @@ public class AddEntityDialog extends DialogFragment
 
     public LatLng getCurrentPosition() { return currentPosition; }
 
+    public AssetRegisterItemsAdapter getRegisterItemsAdapter() {
+        return registerItemsAdapter;
+    }
+
     public interface DialogListener {
         void onAddPositiveClick(DialogFragment dialog);
         void onEditPositiveClick(DialogFragment dialog);

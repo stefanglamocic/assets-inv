@@ -8,6 +8,8 @@ import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
 import com.example.mr_proj.model.Location;
 
+import java.util.Objects;
+
 public class FixedAssetDetails {
     @Embedded
     public FixedAsset fixedAsset;
@@ -36,4 +38,17 @@ public class FixedAssetDetails {
             entityColumn = "id"
     )
     public Location newLocation;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FixedAssetDetails)) return false;
+        FixedAssetDetails that = (FixedAssetDetails) o;
+        return Objects.equals(fixedAsset, that.fixedAsset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(fixedAsset);
+    }
 }

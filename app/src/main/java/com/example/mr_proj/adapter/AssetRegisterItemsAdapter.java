@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -14,14 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mr_proj.R;
 import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.model.AppDatabase;
+import com.example.mr_proj.model.Employee;
 import com.example.mr_proj.model.FixedAsset;
+import com.example.mr_proj.model.Location;
 import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DialogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -99,7 +100,54 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
         else
             DialogUtil.setSpinnerItem(holder.newLocationSpinner, null);
 
+        setSpinnerEvents(holder, position);
+
         disposables.addAll(employeeD, locationD, fixedAssetsD);
+    }
+
+    private void setSpinnerEvents(ItemHolder holder, int listPosition) {
+        AdapterView.OnItemSelectedListener fixedAssetSelected, employeeSelected, locationSelected;
+        FixedAssetDetails fad = fixedAssets.get(listPosition);
+
+        fixedAssetSelected = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fad.fixedAsset = (FixedAsset) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+
+        employeeSelected = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fad.obligatedEmployee = (Employee) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+
+        locationSelected = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fad.newLocation = (Location) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+
+        holder.fixedAssetSpinner.setOnItemSelectedListener(fixedAssetSelected);
+        holder.obligatedEmployeeSpinner.setOnItemSelectedListener(employeeSelected);
+        holder.newLocationSpinner.setOnItemSelectedListener(locationSelected);
     }
 
     @Override
