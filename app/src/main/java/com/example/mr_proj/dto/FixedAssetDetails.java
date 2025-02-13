@@ -1,5 +1,6 @@
 package com.example.mr_proj.dto;
 
+import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
@@ -50,5 +51,11 @@ public class FixedAssetDetails {
     @Override
     public int hashCode() {
         return Objects.hashCode(fixedAsset);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return fixedAsset.name + "-" + newLocation.city + "-" + obligatedEmployee.getRowText() + " ";
     }
 }

@@ -4,12 +4,17 @@ import android.annotation.SuppressLint;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.mr_proj.adapter.AssetRegisterItemsAdapter;
 import com.example.mr_proj.adapter.DropdownListAdapter;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.IDAO;
+import com.example.mr_proj.dto.AssetRegisterDTO;
+import com.example.mr_proj.model.AppDatabase;
+import com.example.mr_proj.model.AssetRegister;
 import com.example.mr_proj.model.DbEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -103,5 +108,31 @@ public class DAOService {
                 });
 
         return searchDisposable;
+    }
+
+    public static Disposable insertAssetRegister(AppDatabase db,
+                                                 ListAdapter<AssetRegister> adapter,
+                                                 AssetRegisterDTO dto) {
+        return db
+                .assetRegisterDAO()
+                .insert(dto.assetRegister)
+                .subscribeOn(Schedulers.io())
+                .flatMapCompletable(id -> {
+                    dto.assetRegister.id = id.intValue();
+                    List<Integer> fixedAssetsIds =
+                            dto.assetList
+                                    .stream()
+                                    .map(fad -> fad.fixedAsset.id)
+                                    .collect(Collectors.toList());
+
+                    return db
+                            .fixedAssetDAO()
+                            .update(fixedAssetsIds, id.intValue());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    adapter.getEntities().add(dto.assetRegister);
+                    adapter.notifyItemInserted(adapter.getItemCount() - 1);
+                });
     }
 }

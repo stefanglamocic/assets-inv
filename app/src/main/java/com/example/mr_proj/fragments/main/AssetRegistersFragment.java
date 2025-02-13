@@ -6,6 +6,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,15 @@ import android.widget.Toast;
 import com.example.mr_proj.R;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.AssetRegisterDAO;
+import com.example.mr_proj.dto.AssetRegisterDTO;
 import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.exception.EmptyFieldException;
 import com.example.mr_proj.exception.FieldNotUniqueException;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
+import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.model.AssetRegister;
-import com.example.mr_proj.model.FixedAsset;
+import com.example.mr_proj.model.DbEntity;
 import com.example.mr_proj.service.DAOService;
 import com.example.mr_proj.util.DatabaseUtil;
 import com.example.mr_proj.util.DialogUtil;
@@ -71,7 +74,19 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
     public void onAddPositiveClick(DialogFragment dialog) {
         try {
             String name = getAssetRegisterName(dialog);
-            Set<FixedAssetDetails> registerItems = getAssetRegisterItems(dialog);
+            List<FixedAssetDetails> registerItems = getAssetRegisterItems(dialog);
+
+            AssetRegisterDTO assetRegister = new AssetRegisterDTO(name, registerItems);
+            Disposable d;
+            if (assetRegister.assetList.isEmpty()) {
+                d = DAOService.insertEntity(assetRegister.assetRegister, listAdapter);
+            }
+            else {
+                AppDatabase db = DatabaseUtil.getDbInstance(getContext());
+                d = DAOService.insertAssetRegister(db, listAdapter, assetRegister);
+            }
+            disposables.add(d);
+
         } catch (EmptyFieldException e) {
             Toast.makeText(getContext(), R.string.fields_empty, Toast.LENGTH_LONG).show();
             return;
@@ -91,7 +106,7 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
         return name;
     }
 
-    private Set<FixedAssetDetails> getAssetRegisterItems(DialogFragment dialog) throws RuntimeException{
+    private List<FixedAssetDetails> getAssetRegisterItems(DialogFragment dialog) throws RuntimeException{
         AddEntityDialog addDialog = (AddEntityDialog) dialog;
         List<FixedAssetDetails> fixedAssetList = addDialog.getRegisterItemsAdapter().getFixedAssets();
         for (FixedAssetDetails fa : fixedAssetList) {
@@ -103,7 +118,7 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
         if (assetRegisterItems.size() != fixedAssetList.size())
             throw new FieldNotUniqueException();
 
-        return assetRegisterItems;
+        return fixedAssetList;
     }
 
     @Override
@@ -113,6 +128,10 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
 
     @Override
     public void onPositiveClick(DialogFragment dialog) { //delete item
-
+        RemoveEntityDialog<? extends DbEntity> removeDialog = (RemoveEntityDialog<? extends DbEntity>) dialog;
+        AssetRegister assetRegister = new AssetRegister();
+        assetRegister.id = removeDialog.getEntityId();
+        Disposable d = DAOService.deleteEntity(assetRegister, listAdapter);
+        disposables.add(d);
     }
 }
