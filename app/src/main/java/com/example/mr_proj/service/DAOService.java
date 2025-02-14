@@ -10,6 +10,7 @@ import com.example.mr_proj.adapter.DropdownListAdapter;
 import com.example.mr_proj.adapter.ListAdapter;
 import com.example.mr_proj.dao.IDAO;
 import com.example.mr_proj.dto.AssetRegisterDTO;
+import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.model.AppDatabase;
 import com.example.mr_proj.model.AssetRegister;
 import com.example.mr_proj.model.DbEntity;
@@ -41,10 +42,6 @@ public class DAOService {
         return dao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(() -> {
-                    if (onFinish != null)
-                        onFinish.run();
-                })
                 .subscribe(list -> {
                     list.add(0, null);
                     ArrayAdapter<T> adapter = new DropdownListAdapter<>(
@@ -54,6 +51,9 @@ public class DAOService {
                     );
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);
+
+                    if (onFinish != null)
+                        onFinish.run();
                 });
     }
 
@@ -123,6 +123,17 @@ public class DAOService {
                             .update(fad.fixedAsset.id, assetRegisterId, employeeId, locationId);
                 }).toArray(Completable[]::new)
             );
+    }
+
+    public static Completable clearAssetObligations(AppDatabase db, List<FixedAssetDetails> list) {
+        return Completable.mergeArray(
+                list.stream()
+                        .map(fad ->
+                                db.fixedAssetDAO()
+                                        .update(fad.fixedAsset.id, null, null, null)
+                        )
+                        .toArray(Completable[]::new)
+        );
     }
 
     public static Disposable insertAssetRegister(AppDatabase db,

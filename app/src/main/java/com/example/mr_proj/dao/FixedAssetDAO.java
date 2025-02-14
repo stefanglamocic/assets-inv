@@ -70,4 +70,16 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
             "LEFT JOIN asset_register AS ar ON fa.asset_register_id = ar.id " +
             "WHERE fa.asset_register_id IS NULL")
     Single<List<FixedAsset>> getAllUnregistered();
+
+    @Transaction
+    @Query("SELECT * FROM fixed_asset AS fa " +
+            "WHERE fa.asset_register_id =:id OR fa.asset_register_id IS NULL")
+    Single<List<FixedAsset>> getAllUnregistered(int id);
+
+    @Transaction
+    @Query("SELECT * FROM fixed_asset AS fa " +
+            "LEFT JOIN employee AS e ON fa.obligated_employee_id = e.id " +
+            "LEFT JOIN location AS l ON fa.new_location_id = l.id " +
+            "WHERE fa.asset_register_id = :id")
+    Single<List<FixedAssetDetails>> getAllByRegister(int id);
 }

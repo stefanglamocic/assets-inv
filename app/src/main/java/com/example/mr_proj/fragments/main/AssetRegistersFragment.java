@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -147,8 +148,17 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
             assetRegister.assetRegister.id = editDialog.getEntityId();
             List<FixedAssetDetails> unwanted = editDialog.getRegisterItemsAdapter().getUnwanted();
 
-            //update assetRegister
-            //update unwanted
+            AppDatabase db = DatabaseUtil.getDbInstance(getContext());
+            Disposable d = Completable.mergeArray(
+                    db.assetRegisterDAO().update(assetRegister.assetRegister),
+                    DAOService.updateMultipleAssets(db, assetRegister),
+                    DAOService.clearAssetObligations(db, unwanted)
+            )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe();
+
+            disposables.add(d);
 
         } catch (EmptyFieldException e) {
             Toast.makeText(getContext(), R.string.fields_empty, Toast.LENGTH_LONG).show();

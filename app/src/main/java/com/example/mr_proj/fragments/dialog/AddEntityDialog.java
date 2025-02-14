@@ -6,12 +6,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +45,6 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -68,7 +67,7 @@ public class AddEntityDialog extends DialogFragment
     //asset register
     protected AssetRegisterItemsAdapter registerItemsAdapter;
 
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    protected final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -192,22 +191,30 @@ public class AddEntityDialog extends DialogFragment
             registerItemsAdapter.getDisposables().clear();
     }
 
-    protected void initRegisterItemsAdapter() {
+    protected void initAssetsRegisterDialog(View dialogView) {
+        initRegisterItemsAdapter(dialogView);
+        initAssetRegisterViews(dialogView);
+    }
+
+    protected void initRegisterItemsAdapter(View dialogView) {
         ActivityResultLauncher<ScanOptions> barcodeScannerLauncher =
                 registerForActivityResult(new ScanContract(), this::barcodeScanned);
         AppDatabase db = DatabaseUtil.getDbInstance(getContext());
         registerItemsAdapter = new AssetRegisterItemsAdapter(db, barcodeScannerLauncher);
     }
 
-    private void initAssetsRegisterDialog(View dialogView) {
-        initRegisterItemsAdapter();
-
+    protected void initAssetRegisterViews(View dialogView) {
         RecyclerView assetItemsView = dialogView.findViewById(R.id.fixed_assets_container);
         assetItemsView.setLayoutManager(new LinearLayoutManager(getContext()));
         assetItemsView.setAdapter(registerItemsAdapter);
 
         Button addAssetItemBtn = dialogView.findViewById(R.id.add_fixed_asset);
         addAssetItemBtn.setOnClickListener(this::addFixedAssetItem);
+
+        ProgressBar progress = dialogView.findViewById(R.id.progress);
+        progress.setVisibility(View.GONE);
+        assetItemsView.setVisibility(View.VISIBLE);
+        addAssetItemBtn.setVisibility(View.VISIBLE);
     }
 
     protected void barcodeScanned(ScanIntentResult scanIntentResult) {

@@ -13,12 +13,25 @@
         android:hint="@string/name"
         android:inputType="text"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fixed_assets_container"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_med"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fixed_assets_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/add_fixed_asset"
@@ -28,6 +41,7 @@
         android:text="@string/add_item"
         android:drawableLeft="@drawable/ic_add"
         android:theme="@style/SecondaryButton"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
 
 </LinearLayout>

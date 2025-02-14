@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegisterItemsAdapter.ItemHolder> {
+    private boolean editMode = true;
+
     private final List<FixedAssetDetails> fixedAssets;
     private final List<FixedAssetDetails> unwanted = new ArrayList<>();
 
@@ -52,6 +55,7 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
 
     public AssetRegisterItemsAdapter(AppDatabase db, ActivityResultLauncher<ScanOptions> barcodeScannerLauncher) {
         this(db, new ArrayList<>(), barcodeScannerLauncher);
+        editMode = false;
     }
 
     @NonNull
@@ -99,17 +103,14 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
     private void initSpinners(ItemHolder holder, int position) {
         FixedAssetDetails fixedAsset = fixedAssets.get(position);
 
-        Disposable fixedAssetsD = db
-                .fixedAssetDAO()
-                .getAllUnregistered()
+        Single<List<FixedAsset>> func = db.fixedAssetDAO().getAllUnregistered();
+        if (editMode) {
+            func = db.fixedAssetDAO().getAllUnregistered(fixedAsset.fixedAsset.assetRegisterId);
+        }
+
+        Disposable fixedAssetsD = func
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(() -> {
-                    if (fixedAsset.fixedAsset != null)
-                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, fixedAsset.fixedAsset.id);
-                    else
-                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, null);
-                })
                 .subscribe(list -> {
                     spinnerAssets = list;
                     list.add(0, null);
@@ -120,14 +121,23 @@ public class AssetRegisterItemsAdapter extends RecyclerView.Adapter<AssetRegiste
                     );
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     holder.fixedAssetSpinner.setAdapter(adapter);
+
+                    if (fixedAsset.fixedAsset != null) {
+                        Log.d("initSpinners", "id: " + fixedAsset.fixedAsset.id);
+                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, fixedAsset.fixedAsset.id);
+                    }
+                    else
+                        DialogUtil.setSpinnerItem(holder.fixedAssetSpinner, null);
                 });
 
         Disposable employeeD = DAOService.populateSpinner(db.employeeDAO(), holder.obligatedEmployeeSpinner,
                 () -> {
-                    if (fixedAsset.obligatedEmployee != null)
+                    if (fixedAsset.obligatedEmployee != null) {
                         DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, fixedAsset.obligatedEmployee.id);
-                    else
+                    }
+                    else {
                         DialogUtil.setSpinnerItem(holder.obligatedEmployeeSpinner, null);
+                    }
                 });
 
         Disposable locationD = DAOService.populateSpinner(db.locationDAO(), holder.newLocationSpinner,

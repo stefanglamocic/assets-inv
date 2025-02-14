@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +34,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     private final T entity;
@@ -74,14 +79,26 @@ public class EditEntityDialog<T extends DbEntity> extends AddEntityDialog {
     }
 
     @Override
-    protected void initRegisterItemsAdapter() {
+    protected void initAssetsRegisterDialog(View dialogView) {
+        initRegisterItemsAdapter(dialogView);
+    }
+
+    @Override
+    protected void initRegisterItemsAdapter(View dialogView) {
         ActivityResultLauncher<ScanOptions> barcodeScannerLauncher =
                 registerForActivityResult(new ScanContract(), this::barcodeScanned);
         AppDatabase db = DatabaseUtil.getDbInstance(getContext());
-        AssetRegisterDTO assetRegisterDTO = new AssetRegisterDTO();
-        assetRegisterDTO.assetRegister = (AssetRegister) entity;
-        //get fixed asset list
-        registerItemsAdapter = new AssetRegisterItemsAdapter(db, assetRegisterDTO.assetList, barcodeScannerLauncher);
+
+        Disposable d =
+                db.fixedAssetDAO()
+                .getAllByRegister(getEntityId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    registerItemsAdapter = new AssetRegisterItemsAdapter(db, list, barcodeScannerLauncher);
+                    initAssetRegisterViews(dialogView);
+                });
+        compositeDisposable.add(d);
     }
 
     private void setAssetRegisterControls(AlertDialog dialog) {
