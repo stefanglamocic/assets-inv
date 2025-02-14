@@ -20,6 +20,7 @@ import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.exception.EmptyFieldException;
 import com.example.mr_proj.exception.FieldNotUniqueException;
 import com.example.mr_proj.fragments.dialog.AddEntityDialog;
+import com.example.mr_proj.fragments.dialog.DetailsDialog;
 import com.example.mr_proj.fragments.dialog.EditEntityDialog;
 import com.example.mr_proj.fragments.dialog.RemoveEntityDialog;
 import com.example.mr_proj.model.AppDatabase;
@@ -34,7 +35,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AssetRegistersFragment extends BaseFragment<AssetRegister>
     implements AddEntityDialog.DialogListener,
@@ -69,6 +72,17 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
     }
 
     private void onItemClick(AssetRegister assetRegister) {
+        AppDatabase db = DatabaseUtil.getDbInstance(getContext());
+        Disposable d = db.assetRegisterDAO()
+                .getById(assetRegister.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(dto -> {
+                    DetailsDialog<AssetRegisterDTO> detailsDialog = new DetailsDialog<>(dto);
+                    detailsDialog.show(getChildFragmentManager(), "assetRegisterDetails");
+                });
+
+        disposables.add(d);
     }
 
     @Override

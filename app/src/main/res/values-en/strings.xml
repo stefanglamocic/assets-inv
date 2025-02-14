@@ -46,4 +46,5 @@
     <string name="fields_empty">Enter the data into all fields</string>
     <string name="item_present">Fixed assets must be unique</string>
     <string name="asset_not_found">Fixed asset not found</string>
+    <string name="fixed_asset_details_header">Name - Obligated employee - New location</string>
 </resources>

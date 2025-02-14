@@ -31,12 +31,14 @@ public class FixedAssetDetails {
     public AssetRegister assetRegister;
     @Relation(
             parentColumn = "obligated_employee_id",
-            entityColumn = "id"
+            entityColumn = "id",
+            entity = Employee.class
     )
     public Employee obligatedEmployee;
     @Relation(
             parentColumn = "new_location_id",
-            entityColumn = "id"
+            entityColumn = "id",
+            entity = Location.class
     )
     public Location newLocation;
 
@@ -53,9 +55,15 @@ public class FixedAssetDetails {
         return Objects.hashCode(fixedAsset);
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return fixedAsset.name + "-" + newLocation.city + "-" + obligatedEmployee.getRowText() + " ";
+        return "FixedAssetDetails{" +
+                "fixedAsset=" + fixedAsset +
+                ", location=" + location +
+                ", employee=" + employee +
+                ", assetRegister=" + assetRegister +
+                ", obligatedEmployee=" + obligatedEmployee +
+                ", newLocation=" + newLocation +
+                '}';
     }
 }

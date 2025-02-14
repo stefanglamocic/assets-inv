@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.example.mr_proj.R;
 import com.example.mr_proj.dao.FixedAssetDAO;
+import com.example.mr_proj.dto.AssetRegisterDTO;
 import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.fragments.main.LocationsFragment;
 import com.example.mr_proj.model.Location;
@@ -83,6 +84,10 @@ public class DetailsDialog<T> extends DialogFragment
             initFADetailsDialog(dialogView);
             initMapView(savedInstanceState, dialogView, R.id.fad_map);
         }
+        else if (entity instanceof AssetRegisterDTO) {
+            dialogView = inflater.inflate(R.layout.dialog_asset_register_details, null);
+            initAssetRegisterDetails(dialogView);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
@@ -90,6 +95,24 @@ public class DetailsDialog<T> extends DialogFragment
                 .setCustomTitle(dialogTitle)
                 .setNeutralButton(R.string.ok, (dialog, which) -> dismiss())
                 .create();
+    }
+
+    private void initAssetRegisterDetails(View dialogView) {
+        AssetRegisterDTO dto = (AssetRegisterDTO) entity;
+
+        TextView arName = dialogView.findViewById(R.id.ar_name);
+        arName.setText(dto.assetRegister.name);
+        TextView arFad = dialogView.findViewById(R.id.fad);
+        StringBuilder builder = new StringBuilder();
+        dto.assetList
+                .forEach(fad -> builder
+                        .append(fad.fixedAsset)
+                        .append(" - ")
+                        .append(fad.obligatedEmployee)
+                        .append(" - ")
+                        .append(fad.newLocation)
+                        .append(System.lineSeparator()));
+        arFad.setText(builder.toString());
     }
 
     private void initFADetailsDialog(View dialogView) {

@@ -8,6 +8,7 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.example.mr_proj.dto.AssetRegisterDTO;
+import com.example.mr_proj.dto.FixedAssetDetails;
 import com.example.mr_proj.model.AssetRegister;
 
 import java.util.List;
@@ -34,10 +35,8 @@ public interface AssetRegisterDAO extends IDAO<AssetRegister>{
     Flowable<List<AssetRegister>> search(String query);
 
     @Transaction
-    @Query("SELECT * FROM asset_register AS ar " +
-            "LEFT JOIN fixed_asset AS fa ON ar.id = fa.asset_register_id " +
-            "LEFT JOIN employee ON fa.obligated_employee_id = employee.id " +
-            "LEFT JOIN location ON fa.new_location_id = location.id " +
-            "WHERE ar.id = :id")
+    @Query("SELECT * FROM fixed_asset " +
+            "LEFT JOIN asset_register ON asset_register.id = fixed_asset.asset_register_id " +
+            "WHERE asset_register.id = :id")
     Single<AssetRegisterDTO> getById(int id);
 }

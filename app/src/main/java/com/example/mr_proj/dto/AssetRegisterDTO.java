@@ -27,9 +27,11 @@ public class AssetRegisterDTO {
         this.assetList = assetList;
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return assetRegister.name + "=>" + assetList.toString();
+        return "AssetRegisterDTO{" +
+                "assetRegister=" + assetRegister +
+                ", assetList=" + assetList +
+                '}';
     }
 }

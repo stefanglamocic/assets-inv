@@ -45,4 +45,5 @@
     <string name="fields_empty">Popunite sva polja u formi</string>
     <string name="item_present">Osnovna sredstva moraju biti jedinstvena</string>
     <string name="asset_not_found">Osnovno sredstvo nije pronađeno</string>
+    <string name="fixed_asset_details_header">Naziv - Zadužena osoba - Nova lokacija</string>
 </resources>
