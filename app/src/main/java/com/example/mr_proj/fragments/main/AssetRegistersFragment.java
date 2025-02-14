@@ -79,12 +79,12 @@ public class AssetRegistersFragment extends BaseFragment<AssetRegister>
 
             AssetRegisterDTO assetRegister = new AssetRegisterDTO(name, registerItems);
             Disposable d;
-            if (assetRegister.assetList.isEmpty()) {
+            if (registerItems.isEmpty()) {
                 d = DAOService.insertEntity(assetRegister.assetRegister, listAdapter);
             }
             else {
                 AppDatabase db = DatabaseUtil.getDbInstance(getContext());
-                d = DAOService.insertAssetRegister(db, listAdapter, assetRegister);
+                d = DAOService.insertAssetRegister(db, assetRegister);
             }
             disposables.add(d);
 

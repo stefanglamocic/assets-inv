@@ -116,9 +116,9 @@ public class DAOService {
         return Completable.mergeArray(dto.assetList
                 .stream()
                 .map(fad -> {
-                    Integer assetRegisterId = fad.assetRegister == null ? null : fad.assetRegister.id;
-                    Integer employeeId = fad.fixedAsset.obligatedEmployeeId;
-                    Integer locationId = fad.fixedAsset.newLocationId;
+                    Integer assetRegisterId = fad.assetRegister == null ? dto.assetRegister.id : fad.assetRegister.id;
+                    Integer employeeId = fad.obligatedEmployee.id;
+                    Integer locationId = fad.newLocation.id;
                     return db.fixedAssetDAO()
                             .update(fad.fixedAsset.id, assetRegisterId, employeeId, locationId);
                 }).toArray(Completable[]::new)
@@ -126,7 +126,6 @@ public class DAOService {
     }
 
     public static Disposable insertAssetRegister(AppDatabase db,
-                                                 ListAdapter<AssetRegister> adapter,
                                                  AssetRegisterDTO dto) {
         return db
                 .assetRegisterDAO()
@@ -137,12 +136,6 @@ public class DAOService {
                     return updateMultipleAssets(db, dto);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    adapter.getEntities().add(dto.assetRegister);
-                    adapter.notifyItemInserted(adapter.getItemCount() - 1);
-                },
-                error -> {
-                    Log.d("insertAssetRegister", error.toString());
-                });
+                .subscribe();
     }
 }

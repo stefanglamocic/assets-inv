@@ -66,7 +66,7 @@ public interface FixedAssetDAO extends IDAO<FixedAsset>{
     Single<FixedAssetDetails> getByBarcode(long barcode);
 
     @Transaction
-    @Query("SELECT fa.id, fa.name, fa.barCode, fa.price FROM fixed_asset AS fa " +
+    @Query("SELECT fa.* FROM fixed_asset AS fa " +
             "LEFT JOIN asset_register AS ar ON fa.asset_register_id = ar.id " +
             "WHERE fa.asset_register_id IS NULL")
     Single<List<FixedAsset>> getAllUnregistered();
